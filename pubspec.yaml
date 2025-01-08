@@ -11,9 +11,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  uuid: ^3.0.6
+  uuid: ^4.2.1
   dio: ^5.2.0
   provider: ^5.0.0
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

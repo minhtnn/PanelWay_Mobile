@@ -31,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Align(
-                  alignment: Alignment.centerLeft, // Căn tiêu đề sang phải
+                  alignment: Alignment.centerLeft,
                   child: Text(
                     "Welcome to, Panelway",
                     style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
@@ -81,10 +81,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: () async {
                           final email = emailController.text.trim();
                           final password = passwordController.text.trim();
-                          // print(email + ", " + password + ", " + (_selectedRole?? "null") );
+                          // debugPrint(email + ", " + password + ", " + (_selectedRole?? "null") );
                           await authViewModel.login(
                               email, password, _selectedRole ?? '');
-                          // print(authViewModel.account?.toJson());
+                          debugPrint(authViewModel.account?.fullName);
                           if (authViewModel.errorMessage != null ||
                               authViewModel.account?.accessToken == null) {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -92,9 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   content: Text(authViewModel.errorMessage!)),
                             );
                           } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Login successful!')),
-                            );
+                            Navigator.pushReplacementNamed(context, AppRoutes.acHomeMain);
                           }
                         },
                         style: ElevatedButton.styleFrom(

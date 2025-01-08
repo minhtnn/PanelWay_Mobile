@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:panelway_mobile/app/app_routes.dart';
 import 'package:panelway_mobile/features/home/widgets/advertisement_card%20.dart';
 import 'package:panelway_mobile/features/home/widgets/bottom_bar.dart';
 import 'package:panelway_mobile/features/home/widgets/icon_navigation.dart';
@@ -29,10 +30,14 @@ class _ACHomeMainState extends State<ACHomeMain> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               CircleIconNavigation(
-                  iconData: Icons.notifications_none_rounded, onTap: () {}),
+                  iconData: Icons.notifications_none_rounded, onTap: () {
+                    Navigator.pushNamed(context, AppRoutes.notification);
+                  }),
               const SizedBox(width: 15),
               CircleIconNavigation(
-                  iconData: Icons.grid_view_outlined, onTap: () {}),
+                  iconData: Icons.grid_view_outlined, onTap: () {
+                    Navigator.pushNamed(context, AppRoutes.acMap);
+                  }),
             ],
           ),
           actions: [
