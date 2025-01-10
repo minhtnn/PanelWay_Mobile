@@ -4,6 +4,7 @@ import 'package:panelway_mobile/features/auth/screen/login_screen.dart';
 import 'package:panelway_mobile/features/auth/screen/signup_screen.dart';
 import 'package:panelway_mobile/features/auth/view_models/auth_viewmodel.dart';
 import 'package:panelway_mobile/features/home/screen/ac_home_main.dart';
+import 'package:panelway_mobile/features/home/screen/ac_map_screen.dart';
 import 'package:panelway_mobile/features/notification/screen/notification_list_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -35,7 +36,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const LoginScreen(),
+      home: MapScreen(),
       onGenerateRoute: AppRoutes.generateRoute,
     );
   }

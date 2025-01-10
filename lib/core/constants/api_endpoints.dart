@@ -14,9 +14,9 @@ class ApiEndpoints {
   static String baseUrl = localhost + _apiEndpoint;
 
   //Authentication
-  static String _authenticationEndpoint = "$baseUrl/auth";
-  static String login = "$_authenticationEndpoint/login";
-  static String signUp = "$_authenticationEndpoint/sign-up";
+  static String authenticationEndpoint = "$baseUrl/auth";
+  static String login = "$authenticationEndpoint/login";
+  static String signUp = "$authenticationEndpoint/sign-up";
 
   //Account
   static const String _accountEndpoint = "/accounts";
