@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:panelway_mobile/app/app_palette.dart';
 
-class CustomTextInput extends StatelessWidget {
+class CustomTextInput extends StatefulWidget {
   final String? labelText;
   final String hintText;
   final TextEditingController? controller;
   final bool isObscureText;
   final bool readOnly;
   final VoidCallback? onTap;
+
   const CustomTextInput({
     super.key,
     this.labelText,
@@ -19,37 +20,73 @@ class CustomTextInput extends StatelessWidget {
   });
 
   @override
+  State<CustomTextInput> createState() => _CustomTextInputState();
+}
+
+class _CustomTextInputState extends State<CustomTextInput> {
+  late bool isObscure;
+  late bool showIcon;
+
+  @override
+  void initState() {
+    super.initState();
+    isObscure = widget.isObscureText; // Khởi tạo trạng thái ẩn/hiện
+    showIcon = false; // Khởi tạo trạng thái không hiển thị icon
+  }
+
+  @override
   Widget build(BuildContext context) {
     final OutlineInputBorder outlineInputBorder = OutlineInputBorder(
-      borderSide: BorderSide(color: Colors.transparent, width: 0.0),
+      borderSide: const BorderSide(color: Colors.transparent, width: 0.0),
       borderRadius: BorderRadius.circular(12.0),
     );
+
     return TextFormField(
-      onTap: onTap,
-      readOnly: readOnly,
-      controller: controller,
+      onTap: widget.onTap,
+      readOnly: widget.readOnly,
+      controller: widget.controller,
+      onChanged: (value) {
+        setState(() {
+          showIcon = value.isNotEmpty;
+        });
+      },
       decoration: InputDecoration(
-        hintText: hintText,
-        labelText: labelText ?? hintText,
+        hintText: widget.hintText,
+        labelText: widget.labelText ?? widget.hintText,
         fillColor: Palette.inputBackground,
         filled: true,
         border: outlineInputBorder,
         enabledBorder: outlineInputBorder,
-        contentPadding: EdgeInsets.symmetric(
+        contentPadding: const EdgeInsets.symmetric(
           horizontal: 30, // Thụt vào hai bên
           vertical: 16, // Khoảng cách trên/dưới
         ),
+        // Chỉ hiển thị biểu tượng khi người dùng nhập
+        suffixIcon: (widget.isObscureText && showIcon)
+            ? IconButton(
+                icon: Icon(
+                  isObscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                ),
+                onPressed: () {
+                  setState(() {
+                    isObscure = !isObscure; // Thay đổi trạng thái
+                  });
+                },
+              )
+            : null,
       ),
       validator: (val) {
         if (val!.trim().isEmpty) {
-          return "$hintText is missing!";
+          return "${widget.hintText} is missing!";
         }
         return null;
       },
-      obscureText: isObscureText,
+      obscureText: isObscure,
     );
   }
 }
+
+
 
 // class CustomDropDownList extends StatelessWidget {
 //   final List<Map<String, String>> list;

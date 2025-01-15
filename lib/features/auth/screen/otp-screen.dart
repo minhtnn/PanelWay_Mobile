@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:panelway_mobile/app/app_palette.dart';
 import 'package:panelway_mobile/app/app_routes.dart';
+import 'package:panelway_mobile/core/widgets/back_page.dart';
 import 'package:panelway_mobile/features/auth/view_models/auth_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -44,106 +45,118 @@ class _OTPScreenState extends State<OTPScreen> {
   Widget build(BuildContext context) {
     final authViewModel = Provider.of<AuthViewModel>(context);
     return Scaffold(
-      appBar: AppBar(),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Align(
-                alignment: Alignment.centerLeft, // Căn tiêu đề sang phải
-                child: Text(
-                  "Welcome to, Panelway",
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                ),
-              ),
-              const SizedBox(height: 10),
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "We already sent you 5 digit numbers toyour email: abcd123@panelway.com",
-                  style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.grey,
-                      fontWeight: FontWeight.w500),
-                  textAlign: TextAlign.left,
-                ),
-              ),
-              const SizedBox(height: 50),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: List.generate(5, (index) {
-                  return Container(
-                    width: 50,
-                    height: 50,
-                    child: TextField(
-                      controller: _controllers[index],
-                      focusNode: _focusNodes[index],
-                      keyboardType: TextInputType.number,
-                      textAlign: TextAlign.center,
-                      maxLength: 1,
-                      decoration: InputDecoration(
-                        counterText: '',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
-                      onChanged: (value) => _handleInput(value, index),
-                    ),
-                  );
-                }),
-              ),
-              const SizedBox(height: 40),
-              Align(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: GestureDetector(
-                    onTap: () {
-                      // Navigator.pushNamed(context, AppRoutes.forgetPassword);
-                      print("Resend OTP");
-                    },
-                    child: const Text(
-                      "Resend",
-                      style: TextStyle(
-                          color: Palette.blueButton,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 50),
-              authViewModel.isLoading
-                  ? const Align(
-                      child: CircularProgressIndicator(),
-                    )
-                  : ElevatedButton(
-                      onPressed: _onContinue,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Palette.blueButton, // Nền giống TextFormField
-                        foregroundColor: Colors.black, // Màu chữ
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 30, // Thụt vào hai bên
-                          vertical: 16, // Khoảng cách trên/dưới
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.0), // Bo góc
-                        ),
-                        side: BorderSide(color: Colors.transparent),
-                        elevation: 0,
-                        minimumSize: Size(double.infinity, 56),
-                      ),
-                      child: const Text(
-                        'Continue',
-                        style:
-                            TextStyle(color: Palette.lightText, fontSize: 16),
-                      ),
-                    ),
-            ],
+      body: Stack(
+        children: [
+          BackButtonCustom(
+            context: context,
+            backToRoute: AppRoutes.login,
           ),
-        ),
+          Align(
+            alignment: Alignment.center,
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Align(
+                      alignment: Alignment.centerLeft, // Căn tiêu đề sang phải
+                      child: Text(
+                        "Welcome to, Panelway",
+                        style: TextStyle(
+                            fontSize: 28, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "We already sent you 5 digit numbers toyour email: abcd123@panelway.com",
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w500),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                    const SizedBox(height: 50),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: List.generate(5, (index) {
+                        return Container(
+                          width: 50,
+                          height: 50,
+                          child: TextField(
+                            controller: _controllers[index],
+                            focusNode: _focusNodes[index],
+                            keyboardType: TextInputType.number,
+                            textAlign: TextAlign.center,
+                            maxLength: 1,
+                            decoration: InputDecoration(
+                              counterText: '',
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                            ),
+                            onChanged: (value) => _handleInput(value, index),
+                          ),
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 40),
+                    Align(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            // Navigator.pushNamed(context, AppRoutes.forgetPassword);
+                            print("Resend OTP");
+                          },
+                          child: const Text(
+                            "Resend",
+                            style: TextStyle(
+                                color: Palette.blueButton,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 50),
+                    authViewModel.isLoading
+                        ? const Align(
+                            child: CircularProgressIndicator(),
+                          )
+                        : ElevatedButton(
+                            onPressed: _onContinue,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Palette.blueButton, // Nền giống TextFormField
+                              foregroundColor: Colors.black, // Màu chữ
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 30, // Thụt vào hai bên
+                                vertical: 16, // Khoảng cách trên/dưới
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(12.0), // Bo góc
+                              ),
+                              side: BorderSide(color: Colors.transparent),
+                              elevation: 0,
+                              minimumSize: Size(double.infinity, 56),
+                            ),
+                            child: const Text(
+                              'Continue',
+                              style: TextStyle(
+                                  color: Palette.lightText, fontSize: 16),
+                            ),
+                          ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

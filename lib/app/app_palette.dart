@@ -18,6 +18,9 @@ class Palette{
   static const String fontName = 'WorkSans';
   static const Color inputBackground = Color(0xf3F4F5F6);
   static const Color blueButton = Color(0xFF0066FF);
+  static const Color whiteButton = Color(0xFFFEFEFE);
+  static const Color borderButton = Color(0xFFE6E8EC);
+  static const Color shadowForButton = Color(0xFF3A5160);
   static const Color grayTransparent = Color.fromARGB(100, 53, 57, 69);
 
   static const TextTheme textTheme = TextTheme(
