@@ -3,7 +3,9 @@ import 'package:panelway_mobile/features/auth/screen/forgetpassword_screen.dart'
 import 'package:panelway_mobile/features/auth/screen/login_screen.dart';
 import 'package:panelway_mobile/features/auth/screen/otp-screen.dart';
 import 'package:panelway_mobile/features/auth/screen/signup_screen.dart';
+import 'package:panelway_mobile/features/home/screen/ac_booking.dart';
 import 'package:panelway_mobile/features/home/screen/ac_home_main.dart';
+import 'package:panelway_mobile/features/home/screen/ac_location_detail.dart';
 import 'package:panelway_mobile/features/home/screen/ac_map_screen.dart';
 import 'package:panelway_mobile/features/notification/screen/notification_list_screen.dart';
 class AppRoutes {
@@ -14,10 +16,12 @@ class AppRoutes {
   static const String otp = "/otp";
   static const String reset = "/reset-password";
   static const String acHomeMain = '/ac-home-main';
-  static const String notification = '/notification';
   static const String acMap = '/ac-map';
-
-
+  static const String acLocationDetail = '/ac-location-detail';
+  static const String notification = '/notification';
+  static const String acBookingAppointment = '/booking-appointment';
+  static const String e_wallet = '/e-wallet';
+  
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case login:
@@ -34,6 +38,10 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => NotificationListScreen());
       case acMap:
         return MaterialPageRoute(builder: (_) => MapScreen());
+      case acLocationDetail:
+        return MaterialPageRoute(builder: (_) => ACLocationDetail());
+      case acBookingAppointment:
+        return MaterialPageRoute(builder: (_) => DateTimePickerScreen());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

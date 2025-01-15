@@ -79,21 +79,21 @@ class _LoginScreenState extends State<LoginScreen> {
                       )
                     : ElevatedButton(
                         onPressed: () async {
-                          final email = emailController.text.trim();
-                          final password = passwordController.text.trim();
-                          // debugPrint(email + ", " + password + ", " + (_selectedRole?? "null") );
-                          await authViewModel.login(
-                              email, password, _selectedRole ?? '');
-                          debugPrint(authViewModel.account?.fullName);
-                          if (authViewModel.errorMessage != null ||
-                              authViewModel.account?.accessToken == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                  content: Text(authViewModel.errorMessage!)),
-                            );
-                          } else {
+                          // final email = emailController.text.trim();
+                          // final password = passwordController.text.trim();
+                          // // debugPrint(email + ", " + password + ", " + (_selectedRole?? "null") );
+                          // await authViewModel.login(
+                          //     email, password, _selectedRole ?? '');
+                          // debugPrint(authViewModel.account?.fullName);
+                          // if (authViewModel.errorMessage != null ||
+                          //     authViewModel.account?.accessToken == null) {
+                          //   ScaffoldMessenger.of(context).showSnackBar(
+                          //     SnackBar(
+                          //         content: Text(authViewModel.errorMessage!)),
+                          //   );
+                          // } else {
                             Navigator.pushReplacementNamed(context, AppRoutes.acHomeMain);
-                          }
+                          // }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor:

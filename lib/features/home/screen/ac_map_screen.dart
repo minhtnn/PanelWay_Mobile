@@ -42,9 +42,8 @@ class _MapScreenState extends State<MapScreen> {
       ),
       body: FlutterMap(
         options: MapOptions(
-          initialCenter: LatLng(10.8231, 106.6297), // Tọa độ trung tâm (TP.HCM)
-          initialZoom: 13.0, // Mức zoom mặc định
-          initialRotation: 45.0, // Xoay bản đồ 45 độ để kiểm tra
+          initialCenter: markers[0].point, // Tọa độ trung tâm (TP.HCM)
+          initialZoom: 13.0,
           onMapEvent: (MapEvent mapEvent) {
             if (mapEvent is MapEventMove) {
               print('Center: ${mapEvent.camera.center}'); // Vị trí trung tâm

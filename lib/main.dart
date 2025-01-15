@@ -3,6 +3,7 @@ import 'package:panelway_mobile/app/app_routes.dart';
 import 'package:panelway_mobile/features/auth/screen/login_screen.dart';
 import 'package:panelway_mobile/features/auth/screen/signup_screen.dart';
 import 'package:panelway_mobile/features/auth/view_models/auth_viewmodel.dart';
+import 'package:panelway_mobile/features/e-wallet/screen/wallet.dart';
 import 'package:panelway_mobile/features/home/screen/ac_home_main.dart';
 import 'package:panelway_mobile/features/home/screen/ac_map_screen.dart';
 import 'package:panelway_mobile/features/notification/screen/notification_list_screen.dart';
@@ -36,7 +37,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: MapScreen(),
+      home: LoginScreen(),
       onGenerateRoute: AppRoutes.generateRoute,
     );
   }
