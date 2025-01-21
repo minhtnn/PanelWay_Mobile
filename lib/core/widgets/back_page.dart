@@ -4,13 +4,17 @@ import 'package:panelway_mobile/app/app_palette.dart';
 class BackButtonCustom extends StatelessWidget {
   final BuildContext context;
   final String backToRoute;
-  const BackButtonCustom({super.key, required this.context, required this.backToRoute});
+  final double? topSide;
+  final double? leftSide;
+  final double? rightSide;
+  const BackButtonCustom({super.key, required this.context, required this.backToRoute, this.topSide = 40, this.leftSide, this.rightSide});
 
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      top: 40, // Khoảng cách từ trên xuống (có thể điều chỉnh)
-      left: 20, // Khoảng cách từ trái sang
+      top: topSide,
+      left: (leftSide != null) ? leftSide : null,
+      right: (rightSide!= null) ? rightSide : null,
       child: Container(
         decoration: BoxDecoration(
           shape: BoxShape.rectangle,

@@ -1,99 +1,138 @@
-
 import 'package:flutter/material.dart';
 import 'package:panelway_mobile/app/app_palette.dart';
 import 'package:panelway_mobile/app/app_routes.dart';
+import 'package:panelway_mobile/core/widgets/back_page.dart';
+import 'package:panelway_mobile/core/widgets/custom_button.dart';
 import 'package:panelway_mobile/features/home/widgets/contact_info.dart';
+import 'package:panelway_mobile/features/home/widgets/detail_description.dart';
 import 'package:panelway_mobile/features/home/widgets/detail_item.dart';
 
 class ACLocationDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Billboard Advertising'),
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-             Navigator.pushReplacementNamed(context, AppRoutes.acHomeMain);
-          },
-        ),
-        actions: [
-        ],
-      ),
       body: SingleChildScrollView(
+        padding: const EdgeInsets.only(top: 30, left: 18.0, right: 18.0, bottom: 20),
         child: Column(
           children: [
-            Container(
-              width: double.infinity,
-              height: 200,
-              color: Colors.blueGrey,
-            ),
-            // Image.network(
-            //   'https://example.com/billboard_image.jpg',
-            //   fit: BoxFit.cover,
-            //   width: double.infinity,
-            //   height: 200,
-            // ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Billboard Advertising',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            Stack(
+              children: [
+                Container(
+                  width: double.infinity,
+                  height: 350,
+                  decoration: BoxDecoration(
+                      color: Colors.blueGrey,
+                      borderRadius: BorderRadius.circular(18)),
+                ),
+                BackButtonCustom(
+                  context: context,
+                  backToRoute: AppRoutes.acHomeMain,
+                  topSide: 10,
+                  leftSide: 10,
+                ),
+                Positioned(
+                  top: 275,
+                  right: 20,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        "Billboard advertising",
+                        style: TextStyle(
+                            color: Palette.lightText,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        "123 Nguyen Van Tang, Ward 5, District 9, HCM",
+                        style: TextStyle(
+                            color: Palette.lightText,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 8),
-                  Text('123 Nguyen Van Linh, Ward 5, District 9, HCM'),
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Detail',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  ),
                   SizedBox(height: 16),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       DetailItem(label: 'Price', value: '436\$/month'),
                       DetailItem(label: 'Size', value: '100m²'),
                       DetailItem(label: 'Height', value: '10m'),
                     ],
                   ),
-                  SizedBox(height: 16),
-                  Text(
+                  const SizedBox(height: 24),
+                  const Text(
                     'Description',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                   ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Location: 123 Nguyen Van Linh, Ward 5, District 9, HCM\n'
-                    'Rent time: at least 4 months\n'
-                    'Estimated Traffic: 60,000 views/day\n'
-                    'Audience Type: Commuters, Local Residents\n'
-                    'Type: Outdoor billboard',
+                  const SizedBox(height: 16),
+                  const Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      DetailDescription(
+                          title: "Location",
+                          description:
+                              "123 Nguyen Van Linh, Ward 5, District 9, HCM."),
+                      DetailDescription(
+                          title: "Rent time",
+                          description: "at least 4 months."),
+                      DetailDescription(
+                          title: "Estimated traffic",
+                          description: "60,000 views/day."),
+                      DetailDescription(
+                          title: "Audience type",
+                          description: "Commuters, Local Residents."),
+                      DetailDescription(
+                          title: "Type",
+                          description:
+                              "123 Nguyen Van Linh, Ward 5, District 9, HCM."),
+                    ],
                   ),
-                  SizedBox(height: 16),
-                  Text(
+                  const SizedBox(height: 24),
+                  const Text(
                     'Detailed Images',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 16),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       ImageThumbnail(),
                       ImageThumbnail(),
                       ImageThumbnail(),
                     ],
                   ),
-                  SizedBox(height: 16),
-                  Text(
+                  const SizedBox(height: 24),
+                  const Text(
                     'View on Map',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 16),
                   Container(
                     height: 200,
-                    color: Colors.grey[300],
                     child: Center(child: Text('Map Placeholder')),
+                    decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(20)),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   ContactInfo(),
                 ],
               ),
@@ -102,25 +141,13 @@ class ACLocationDetail extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-        child: Padding(
-          padding: const EdgeInsets.all(0.0),
-          child: ElevatedButton(
+        child: CustomButton(
+            functionName: "Book now",
             onPressed: () {
               Navigator.pushNamed(context, AppRoutes.acBookingAppointment);
             },
-            child: Text(
-              'Book now',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Palette.lightText,
-              ),),
-            style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              backgroundColor: Palette.blueButton
-            ),
-          ),
-        ),
+            buttonBackgroundColor: Palette.blueButton,
+            textColor: Palette.lightText),
       ),
     );
   }

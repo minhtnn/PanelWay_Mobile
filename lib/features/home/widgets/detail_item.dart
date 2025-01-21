@@ -8,15 +8,25 @@ class DetailItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
       children: [
-        Text(
-          label,
-          style: TextStyle(fontWeight: FontWeight.bold),
+        Image.asset(
+          'lib/assets/Icon.png',
         ),
-        SizedBox(height: 4),
-        Text(value),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 4),
+            Text(value),
+          ],
+        ),
       ],
+      spacing: 8,
     );
   }
 }
@@ -26,9 +36,12 @@ class ImageThumbnail extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 100,
-      height: 100,
-      color: Colors.grey[300],
+      height: 130,
       child: Center(child: Text('+12')),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: Colors.grey[300],
+      ),
     );
   }
 }

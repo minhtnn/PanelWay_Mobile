@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:panelway_mobile/app/app_palette.dart';
 import 'package:panelway_mobile/app/app_routes.dart';
 import 'package:panelway_mobile/features/auth/screen/login_screen.dart';
-import 'package:panelway_mobile/features/auth/screen/signup_screen.dart';
 import 'package:panelway_mobile/features/auth/view_models/auth_viewmodel.dart';
-import 'package:panelway_mobile/features/e-wallet/screen/wallet.dart';
-import 'package:panelway_mobile/features/home/screen/ac_home_main.dart';
-import 'package:panelway_mobile/features/home/screen/ac_map_screen.dart';
-import 'package:panelway_mobile/features/notification/screen/notification_list_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -36,6 +32,10 @@ class MyApp extends StatelessWidget {
             fontSize: 20,
           ),
         ),
+        bottomAppBarTheme: BottomAppBarTheme(
+          color: Colors.white,
+          shadowColor: Palette.shadowForButton
+        )
       ),
       home: LoginScreen(),
       onGenerateRoute: AppRoutes.generateRoute,
