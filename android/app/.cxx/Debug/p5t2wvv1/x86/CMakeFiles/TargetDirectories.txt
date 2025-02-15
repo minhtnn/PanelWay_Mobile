@@ -1,0 +1,2 @@
+C:/Users/N.Minh- ADMIN/Documents/PanelWay/new-mobile/PanelWay_Mobile/android/app/.cxx/Debug/p5t2wvv1/x86/CMakeFiles/edit_cache.dir
+C:/Users/N.Minh- ADMIN/Documents/PanelWay/new-mobile/PanelWay_Mobile/android/app/.cxx/Debug/p5t2wvv1/x86/CMakeFiles/rebuild_cache.dir
