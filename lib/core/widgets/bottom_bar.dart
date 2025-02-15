@@ -5,6 +5,7 @@ import 'package:panelway_mobile/features/account/screens/account_information.dar
 import 'package:panelway_mobile/features/account/screens/account_setting.dart';
 import 'package:panelway_mobile/features/home/screen/ac_home_main.dart';
 import 'package:panelway_mobile/features/notification/screen/notification_list_screen.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class BottomBarWidget extends StatefulWidget {
   final int? pageIndex;
@@ -85,9 +86,9 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
               itemLabelStyle: const TextStyle(fontSize: 10),
               elevation: 1,
               bottomBarItems: [
-                customBottomBarItem(Icons.home_filled, "Home"),
-                customBottomBarItem(Icons.chat_bubble, "Chat"),
-                customBottomBarItem(Icons.settings, "Chat"),
+                customBottomBarItem(Symbols.home, "Home"),
+                customBottomBarItem(Symbols.chat_bubble_outline_rounded, "Chat"),
+                customBottomBarItem(Symbols.settings, "Chat"),
               ],
               onTap: (index) {
                 _pageController.jumpToPage(index);

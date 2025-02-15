@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:panelway_mobile/app/app_palette.dart';
 import 'package:panelway_mobile/app/app_routes.dart';
 import 'package:panelway_mobile/features/home/widgets/advertisement_card%20.dart';
 import 'package:panelway_mobile/features/home/widgets/icon_navigation.dart';
@@ -100,7 +101,7 @@ class _ACHomeMainState extends State<ACHomeMain> {
                           child: Container(
                             padding: EdgeInsets.all(0),
                             decoration: BoxDecoration(
-                              color: Colors.blue,
+                              color: Palette.blueButton,
                               borderRadius: BorderRadius.circular(12.0),
                             ),
                             child: IconButton(
@@ -116,14 +117,14 @@ class _ACHomeMainState extends State<ACHomeMain> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(16.0)),
                           borderSide: BorderSide(
-                            color: Colors.black54,
+                            color: Palette.chipBackground,
                             width: 1.0,
                           ),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(16.0)),
                           borderSide: BorderSide(
-                            color: Colors.black54,
+                            color: Palette.chipBackground,
                             width: 1.0,
                           ),
                         ),

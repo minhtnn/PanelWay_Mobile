@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class Palette{
   static const Color notWhite = Color(0xFFEDF0F2);
   static const Color nearlyWhite = Color(0xFFFEFEFE);
+  static const Color nearlyWhite2 =Color.fromRGBO(250, 250, 250, 1);
   static const Color white = Color(0xFFFFFFFF);
   static const Color nearlyBlack = Color(0xFF213333);
   static const Color grey = Color(0xFF3A5160);

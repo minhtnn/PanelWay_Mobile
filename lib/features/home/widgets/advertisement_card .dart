@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:panelway_mobile/app/app_palette.dart';
 import 'package:panelway_mobile/app/app_routes.dart';
 
@@ -154,7 +155,7 @@ class AdvertisementCard extends StatelessWidget {
                                   color: Colors.blue,
                                 ),
                               ),
-                              Icon(Icons.keyboard_double_arrow_down)
+                              Icon(Symbols.keyboard_arrow_down)
                             ],
                           )),
                         ),
