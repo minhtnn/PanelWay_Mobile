@@ -6,6 +6,8 @@ import 'package:panelway_mobile/features/auth/screen/forgetpassword_screen.dart'
 import 'package:panelway_mobile/features/auth/screen/login_screen.dart';
 import 'package:panelway_mobile/features/auth/screen/otp-screen.dart';
 import 'package:panelway_mobile/features/auth/screen/signup_screen.dart';
+import 'package:panelway_mobile/features/booking/rent_client/upload_ad_content.dart';
+import 'package:panelway_mobile/features/booking/space_provider/create_space_provider.dart';
 import 'package:panelway_mobile/features/home/screen/ac_booking.dart';
 import 'package:panelway_mobile/features/home/screen/ac_home_main.dart';
 import 'package:panelway_mobile/features/home/screen/ac_location_detail.dart';
@@ -27,7 +29,9 @@ class AppRoutes {
   static const String accountSetting = "/account-setting";
   static const String accountInformation = "/account-information";
   static const String bottombar = "/bottom-bar";
-  
+  static const String uploadContent = "/upload-ad-content";
+  static const String uploadSpace = "/upload-space";
+
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case login:
@@ -39,7 +43,10 @@ class AppRoutes {
       case otp:
         return MaterialPageRoute(builder: (_) => OTPScreen());
       case acHomeMain:
-        return MaterialPageRoute(builder: (_) => ACHomeMain(bottomBarIndex: 1,));
+        return MaterialPageRoute(
+            builder: (_) => ACHomeMain(
+                  bottomBarIndex: 1,
+                ));
       case notification:
         return MaterialPageRoute(builder: (_) => NotificationListScreen());
       case acMap:
@@ -52,9 +59,16 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => AccountSetting());
       case accountInformation:
         return MaterialPageRoute(builder: (_) => AccountInformation());
+      case uploadContent:
+        return MaterialPageRoute(builder: (_) => UploadAdContent());
+      case uploadSpace:
+        return MaterialPageRoute(builder: (_) => UploadSpaceInformation());
       case bottombar:
-      final int previousPage = settings.arguments as int? ?? 0;
-        return MaterialPageRoute(builder: (_) => BottomBarWidget(pageIndex: previousPage,));
+        final int previousPage = settings.arguments as int? ?? 0;
+        return MaterialPageRoute(
+            builder: (_) => BottomBarWidget(
+                  pageIndex: previousPage,
+                ));
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

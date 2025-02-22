@@ -47,9 +47,11 @@ class BackButtonCustom extends StatelessWidget {
   final BuildContext context;
   final String backToRoute;
   final String? title;
+  final double? buttonTitleDistance;
   const BackButtonCustom(
       {super.key,
       this.previousPage,
+      this.buttonTitleDistance,
       required this.context,
       required this.backToRoute,
       this.title});
@@ -75,7 +77,7 @@ class BackButtonCustom extends StatelessWidget {
         ),
         (title != null)
             ? Container(
-              padding: EdgeInsets.only(left: 55),
+              padding: EdgeInsets.only(left: buttonTitleDistance ?? 55),
               child: Text(
                 title!,
                 style: TextStyle(

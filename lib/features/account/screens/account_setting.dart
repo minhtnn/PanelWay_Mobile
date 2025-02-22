@@ -75,12 +75,22 @@ class _AccountSettingState extends State<AccountSetting> {
                     onTap: () {
                   Navigator.pushNamed(context, AppRoutes.accountInformation);
                 }),
-                buildProfileOption(Symbols.favorite, "Favourite"),
-                buildProfileOption(Symbols.history, "History"),
-                buildProfileOption(Symbols.settings, "Settings"),
+                buildProfileOption(Symbols.favorite, "Favourite", onTap: () {
+                  
+                },),
+                buildProfileOption(Symbols.history, "History", onTap: () {
+                  
+                },),
+                buildProfileOption(Symbols.settings, "Settings", onTap: () {
+                  
+                },),
+                buildProfileOption(Symbols.logout, "Log out", onTap: () {
+                  
+                },)
               ],
             ),
           ),
+          
         ],
       ),
     );
@@ -96,10 +106,11 @@ Widget buildProfileOption(IconData icon, String title,
       child: Icon(icon, color: Palette.blueButton),
       decoration: BoxDecoration(
         color: Palette.nearlyWhite2,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(10),
       ),
     ),
-    title: Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+    title: Text(title,
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
     trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
     onTap: onTap,
   );

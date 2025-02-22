@@ -9,6 +9,7 @@ class CustomTextInput extends StatefulWidget {
   final bool isObscureText;
   final bool readOnly;
   final VoidCallback? onTap;
+  final bool needExtendHeight;
 
   CustomTextInput({
     super.key,
@@ -19,6 +20,7 @@ class CustomTextInput extends StatefulWidget {
     this.isObscureText = false,
     this.readOnly = false,
     this.onTap,
+    this.needExtendHeight = false,
   });
 
   @override
@@ -100,23 +102,14 @@ class _CustomTextInputState extends State<CustomTextInput> {
             return null;
           },
           obscureText: isObscure,
+          minLines: 1,
+          maxLines: widget.needExtendHeight? null:1,
         ),
       ],
     );
   }
 }
 
-// class CustomDropDownList extends StatelessWidget {
-//   final List<Map<String, String>> list;
-//   final String selectedValue;
-//   const CustomDropDownList(
-//       {super.key, required this.list, required this.selectedValue});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return
-//   }
-// }
 
 class CustomDropDownList extends StatefulWidget {
   final String hintText;
@@ -150,6 +143,7 @@ class _CustomDropDownListState extends State<CustomDropDownList> {
         borderRadius: BorderRadius.circular(12.0), // Bo góc
       ),
       child: DropdownButtonFormField<String>(
+        isExpanded: true,
         decoration: InputDecoration(
           hintText: widget.hintText,
           fillColor: Color(0xFFF7F8FA),

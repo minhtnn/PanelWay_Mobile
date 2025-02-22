@@ -3,6 +3,7 @@ import 'package:panelway_mobile/app/app_palette.dart';
 import 'package:panelway_mobile/app/app_routes.dart';
 import 'package:panelway_mobile/features/auth/screen/login_screen.dart';
 import 'package:panelway_mobile/features/auth/view_models/auth_viewmodel.dart';
+import 'package:panelway_mobile/features/booking/rent_client/upload_ad_content.dart';
 import 'package:provider/provider.dart';
 
 void main() {

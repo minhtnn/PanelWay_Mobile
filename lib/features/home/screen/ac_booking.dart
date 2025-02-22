@@ -3,6 +3,8 @@ import 'package:panelway_mobile/app/app_palette.dart';
 import 'package:panelway_mobile/app/app_routes.dart';
 import 'package:panelway_mobile/core/widgets/back_page.dart';
 import 'package:panelway_mobile/core/widgets/custom_button.dart';
+import 'package:panelway_mobile/core/widgets/custom_field.dart';
+import 'dart:async';
 
 class DateTimePickerScreen extends StatefulWidget {
   @override
@@ -13,7 +15,7 @@ class _DateTimePickerScreenState extends State<DateTimePickerScreen> {
   int selectedDateIndex = 2; // Default selected date
   int selectedFromTimeIndex = 2; // Default "From time" index
   int selectedToTimeIndex = 2; // Default "To time" index
-
+  String? _selectedRole;
   final List<String> dates = ['14', '13', '12', '11', '10', '09', '08'];
   final List<String> days = ['Mo', 'Tu', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   final List<String> times = [
@@ -76,10 +78,12 @@ class _DateTimePickerScreenState extends State<DateTimePickerScreen> {
                                 decoration: BoxDecoration(
                                   color: Palette.whiteButton,
                                   border: selectedDateIndex == index
-                                      ? Border.all(color: Palette.blueButton, width: 2)
-                                      : Border.all(color: Palette.borderButton, width: 1),
+                                      ? Border.all(
+                                          color: Palette.blueButton, width: 2)
+                                      : Border.all(
+                                          color: Palette.borderButton,
+                                          width: 1),
                                   borderRadius: BorderRadius.circular(8),
-                                  
                                 ),
                                 width: 83,
                                 height: 96,
@@ -139,8 +143,10 @@ class _DateTimePickerScreenState extends State<DateTimePickerScreen> {
                           decoration: BoxDecoration(
                             color: Palette.whiteButton,
                             border: selectedFromTimeIndex == index
-                                ? Border.all(color: Palette.blueButton, width: 2)
-                                : Border.all(color: Palette.borderButton, width: 1),
+                                ? Border.all(
+                                    color: Palette.blueButton, width: 2)
+                                : Border.all(
+                                    color: Palette.borderButton, width: 1),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
@@ -181,8 +187,10 @@ class _DateTimePickerScreenState extends State<DateTimePickerScreen> {
                           decoration: BoxDecoration(
                             color: Palette.whiteButton,
                             border: selectedToTimeIndex == index
-                                ? Border.all(color: Palette.blueButton, width: 2)
-                                : Border.all(color: Palette.borderButton, width: 1),
+                                ? Border.all(
+                                    color: Palette.blueButton, width: 2)
+                                : Border.all(
+                                    color: Palette.borderButton, width: 1),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
@@ -200,6 +208,20 @@ class _DateTimePickerScreenState extends State<DateTimePickerScreen> {
                     }),
                   ),
                 ),
+                const SizedBox(height: 32),
+                Text(
+                  "Advertising content",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                ),
+                SizedBox(height: 16),
+                CustomDropDownList(
+                    list: [],
+                    hintText: "Your advertising content",
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedRole = value;
+                      });
+                    }),
               ],
             ),
           ],
@@ -209,7 +231,80 @@ class _DateTimePickerScreenState extends State<DateTimePickerScreen> {
         child: CustomButton(
             functionName: "Next",
             onPressed: () {
-              Navigator.pushNamed(context, AppRoutes.acBookingAppointment);
+              int countdown = 3; // Countdown starts at 3 seconds
+              late Timer timer;
+              showDialog(
+                context: context,
+                barrierDismissible:
+                    false, // Prevents closing by tapping outside
+                builder: (BuildContext dialogContext) {
+                  return StatefulBuilder(
+                    builder: (context, setState) {
+                      // Start countdown when the dialog is built
+                      timer = Timer.periodic(Duration(seconds: 1), (t) {
+                        if (!context.mounted) {
+                          t.cancel();
+                          return;
+                        }
+
+                        if (countdown > 1) {
+                          setState(() {
+                            countdown--;
+                          });
+                        } else {
+                          t.cancel();
+                          if (dialogContext.mounted) {
+                            Navigator.pop(dialogContext);
+                            Navigator.pushNamed(context, AppRoutes.bottombar,
+                                arguments: 0);
+                          }
+                        }
+                      });
+
+                      return AlertDialog(
+                        title: Container(
+                          margin: EdgeInsets.only(bottom: 25.0),
+                          child: Text(
+                            "Booking successfully",
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        content: Container(
+                          margin: EdgeInsets.only(bottom: 25.0),
+                          child: Text(
+                            ("Your booking request has been sent to the space provider.\n\n"
+                             + "Redirecting to main menu in $countdown seconds..."),
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              color: Palette.darkText,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        actions: [
+                          CustomButton(
+                              functionName: "Back to main menu",
+                              onPressed: () {
+                                timer.cancel();
+                                if (dialogContext.mounted) {
+                                  Navigator.pop(dialogContext);
+                                }
+                                Navigator.pushNamed(
+                                    context, AppRoutes.bottombar,
+                                    arguments: 0);
+                              },
+                              buttonBackgroundColor: Palette.blueButton,
+                              textColor: Palette.white)
+                        ],
+                      );
+                    },
+                  );
+                },
+              ).then((_) {
+                if (timer.isActive) {
+                  timer.cancel();
+                }
+              });
             },
             buttonBackgroundColor: Palette.blueButton,
             textColor: Palette.lightText),
