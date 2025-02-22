@@ -4,6 +4,7 @@ import 'package:panelway_mobile/app/app_routes.dart';
 import 'package:panelway_mobile/core/widgets/back_page.dart';
 import 'package:panelway_mobile/core/widgets/custom_button.dart';
 import 'package:panelway_mobile/core/widgets/custom_field.dart';
+import 'package:panelway_mobile/core/enum/bottom_bar_page.dart';
 import 'dart:async';
 
 class DateTimePickerScreen extends StatefulWidget {
@@ -256,7 +257,7 @@ class _DateTimePickerScreenState extends State<DateTimePickerScreen> {
                           if (dialogContext.mounted) {
                             Navigator.pop(dialogContext);
                             Navigator.pushNamed(context, AppRoutes.bottombar,
-                                arguments: 0);
+                                arguments: BottomBarPage.home.index);
                           }
                         }
                       });
@@ -291,7 +292,7 @@ class _DateTimePickerScreenState extends State<DateTimePickerScreen> {
                                 }
                                 Navigator.pushNamed(
                                     context, AppRoutes.bottombar,
-                                    arguments: 0);
+                                    arguments: BottomBarPage.home.index);
                               },
                               buttonBackgroundColor: Palette.blueButton,
                               textColor: Palette.white)

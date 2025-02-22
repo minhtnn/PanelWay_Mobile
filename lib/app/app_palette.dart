@@ -24,6 +24,10 @@ class Palette{
   static const Color shadowForButton = Color(0xFF3A5160);
   static const Color grayTransparent = Color.fromARGB(100, 53, 57, 69);
   static const Color buttonGrayTransparent = Color(0xFFF1F1F1);
+  static const Color red = Color(0xFFEB5A5A);
+  static const Color green = Color(0xFF48BC65);
+  static const Color yellow = Color(0xFFEB8E13);
+
 
 
   static const TextTheme textTheme = TextTheme(

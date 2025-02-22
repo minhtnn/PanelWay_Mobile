@@ -74,12 +74,10 @@ class _AccountSettingState extends State<AccountSetting> {
                 buildProfileOption(Symbols.person_filled, "Account Profile",
                     onTap: () {
                   Navigator.pushNamed(context, AppRoutes.accountInformation);
-                }),
-                buildProfileOption(Symbols.favorite, "Favourite", onTap: () {
-                  
                 },),
+                
                 buildProfileOption(Symbols.history, "History", onTap: () {
-                  
+                  Navigator.pushNamed(context, AppRoutes.history);
                 },),
                 buildProfileOption(Symbols.settings, "Settings", onTap: () {
                   

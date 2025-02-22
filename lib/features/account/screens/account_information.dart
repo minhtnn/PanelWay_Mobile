@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:panelway_mobile/app/app_palette.dart';
 import 'package:panelway_mobile/app/app_routes.dart';
 import 'package:panelway_mobile/core/widgets/back_page.dart';
-import 'package:panelway_mobile/core/widgets/bottom_bar.dart';
 import 'package:panelway_mobile/core/widgets/custom_button.dart';
 import 'package:panelway_mobile/core/widgets/custom_field.dart';
+import 'package:panelway_mobile/core/enum/bottom_bar_page.dart';
 
 class AccountInformation extends StatefulWidget {
   const AccountInformation({super.key});
@@ -45,7 +45,7 @@ class _AccountInformationState extends State<AccountInformation> {
             context: context,
             backToRoute: AppRoutes.bottombar,
             title: "Account Profile",
-            previousPage: 2,
+            previousPage: BottomBarPage.settings.index,
           ),
           const SizedBox(height: 20),
           Center(

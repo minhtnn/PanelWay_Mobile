@@ -5,8 +5,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:panelway_mobile/app/app_palette.dart';
 import 'package:panelway_mobile/app/app_routes.dart';
-import 'dart:math' show pi;
 import 'package:panelway_mobile/core/constants/app_constants.dart';
+import 'package:panelway_mobile/core/enum/bottom_bar_page.dart';
 
 // Add MapStyle enum
 enum MapStyle { standard, dark, light, satellite }
@@ -366,7 +366,7 @@ class _MapScreenState extends State<MapScreen> {
               children: [
                 GestureDetector(
                   onTap: () {
-                      Navigator.popAndPushNamed(context, AppRoutes.bottombar, arguments: 0);
+                      Navigator.popAndPushNamed(context, AppRoutes.bottombar, arguments: BottomBarPage.home.index);
                   },
                   child: Container(
                     padding: EdgeInsets.all(10),

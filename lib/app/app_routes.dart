@@ -13,6 +13,8 @@ import 'package:panelway_mobile/features/home/screen/ac_home_main.dart';
 import 'package:panelway_mobile/features/home/screen/ac_location_detail.dart';
 import 'package:panelway_mobile/features/home/screen/ac_map_screen.dart';
 import 'package:panelway_mobile/features/notification/screen/notification_list_screen.dart';
+import 'package:panelway_mobile/features/history/screen/history.dart';
+
 class AppRoutes {
   static const String login = '/login';
   static const String home = '/home';
@@ -31,6 +33,7 @@ class AppRoutes {
   static const String bottombar = "/bottom-bar";
   static const String uploadContent = "/upload-ad-content";
   static const String uploadSpace = "/upload-space";
+  static const String history = "/history";
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -63,6 +66,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => UploadAdContent());
       case uploadSpace:
         return MaterialPageRoute(builder: (_) => UploadSpaceInformation());
+      case history:
+        return MaterialPageRoute(builder: (_) => UserHistory());
       case bottombar:
         final int previousPage = settings.arguments as int? ?? 0;
         return MaterialPageRoute(

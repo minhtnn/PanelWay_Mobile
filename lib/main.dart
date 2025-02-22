@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:panelway_mobile/app/app_palette.dart';
 import 'package:panelway_mobile/app/app_routes.dart';
-import 'package:panelway_mobile/features/auth/screen/login_screen.dart';
 import 'package:panelway_mobile/features/auth/view_models/auth_viewmodel.dart';
-import 'package:panelway_mobile/features/booking/rent_client/upload_ad_content.dart';
 import 'package:provider/provider.dart';
+import 'package:panelway_mobile/features/payment/payment.dart';
 
 void main() {
   runApp(
@@ -38,7 +37,7 @@ class MyApp extends StatelessWidget {
           shadowColor: Palette.shadowForButton
         )
       ),
-      home: LoginScreen(),
+      home: QRCodeScreen(qrCodeData: "00020101021238590010A000000727012900069704180115V3CAS62202836280208QRIBFTTA53037045405200005802VN62220818CSCKXFX4XW6 string6304A086",),
       onGenerateRoute: AppRoutes.generateRoute,
     );
   }

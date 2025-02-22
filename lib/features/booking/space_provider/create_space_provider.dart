@@ -8,7 +8,7 @@ import 'package:panelway_mobile/core/widgets/custom_button.dart';
 import 'package:panelway_mobile/core/widgets/custom_field.dart';
 import 'package:panelway_mobile/core/widgets/custom_upload_image.dart';
 import 'package:panelway_mobile/core/widgets/progress_bar.dart';
-import 'package:panelway_mobile/core/constants/status_constrant.dart';
+import 'package:panelway_mobile/core/enum/status_enum.dart';
 
 class UploadSpaceInformation extends StatefulWidget {
   const UploadSpaceInformation({super.key});

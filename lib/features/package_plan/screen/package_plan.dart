@@ -1,0 +1,50 @@
+import 'package:flutter/material.dart';
+import 'package:panelway_mobile/app/app_palette.dart';
+import 'package:panelway_mobile/features/package_plan/widgets/package_information.dart';
+
+class PackagePlan extends StatelessWidget {
+  const PackagePlan({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    List<String> freeFeatures = [
+      "10 searches and view available advertising locations",
+      "Basic filters by area and rental price",
+      "Get the first 5 bookings for free",
+      "Basic filters by area and rental price."
+    ];
+    return ListView(
+      padding: EdgeInsets.only(left: 20, right: 20, top: 50, bottom: 100),
+      children: [
+        Container(
+          margin: EdgeInsets.only(bottom: 70, top: 50),
+          child: Text(
+            "Choose your plan",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: Palette.darkText,
+                fontSize: 24,
+                fontWeight: FontWeight.w600),
+          ),
+        ),
+        PackageInformation(
+            packageName: "Free",
+            packagePrice: 0,
+            packagePriceUnit: "VND",
+            packageButtonName: "Your current plan",
+            buttonColor: Palette.grayTransparent,
+            onTap: () {},
+            featureList: freeFeatures),
+        const SizedBox(height: 80,),
+        PackageInformation(
+            packageName: "Standard",
+            packagePrice: 300000,
+            packagePriceUnit: "VND",
+            packageButtonName: "Upgrade your plan",
+            buttonColor: Palette.blueButton,
+            onTap: () {},
+            featureList: freeFeatures),
+      ],
+    );
+  }
+}
