@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:panelway_mobile/app/app_palette.dart';
 import 'package:panelway_mobile/app/app_routes.dart';
 import 'package:panelway_mobile/core/constants/role_constant.dart';
+import 'package:panelway_mobile/core/enum/bottom_bar_page.dart';
 import 'package:panelway_mobile/core/widgets/custom_button.dart';
 import 'package:panelway_mobile/core/widgets/custom_field.dart';
 import 'package:panelway_mobile/features/auth/view_models/auth_viewmodel.dart';
@@ -82,22 +83,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   : CustomButton(
                       functionName: "Login",
                       onPressed: () async {
-                        // final email = emailController.text.trim();
-                        // final password = passwordController.text.trim();
-                        // // debugPrint(email + ", " + password + ", " + (_selectedRole?? "null") );
-                        // await authViewModel.login(
-                        //     email, password, _selectedRole ?? '');
-                        // debugPrint(authViewModel.account?.fullName);
-                        // if (authViewModel.errorMessage != null ||
-                        //     authViewModel.account?.accessToken == null) {
-                        //   ScaffoldMessenger.of(context).showSnackBar(
-                        //     SnackBar(
-                        //         content: Text(authViewModel.errorMessage!)),
-                        //   );
-                        // } else {
-                        Navigator.pushReplacementNamed(
-                            context, AppRoutes.bottombar);
-                        // }
+                        final email = emailController.text.trim();
+                        final password = passwordController.text.trim();
+                        final success = await authViewModel.login(
+                            email, password, _selectedRole ?? '');
+                        if (success && mounted) {
+                          Navigator.pushReplacementNamed(
+                              context, AppRoutes.bottombar,
+                              arguments: BottomBarPage.home.index);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(authViewModel.error!)),
+                          );
+                        }
                       },
                       buttonBackgroundColor: Palette.blueButton,
                       textColor: Palette.lightText),
@@ -178,5 +176,12 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     ));
+  }
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    _selectedRole = '';
+    super.dispose();
   }
 }

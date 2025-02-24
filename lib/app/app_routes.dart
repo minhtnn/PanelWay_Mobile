@@ -71,7 +71,8 @@ class AppRoutes {
       case bottombar:
         final int previousPage = settings.arguments as int? ?? 0;
         return MaterialPageRoute(
-            builder: (_) => BottomBarWidget(
+            builder: (cont) => BottomBarWidget(
+              
                   pageIndex: previousPage,
                 ));
       default:

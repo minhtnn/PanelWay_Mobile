@@ -29,37 +29,52 @@ class AdvertisementCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.only(bottom: 24),
         child: GestureDetector(
-          onTap: (){
-            Navigator.pushNamed(context, AppRoutes.acLocationDetail, arguments: bottomBarIndex);
+          onTap: () {
+            Navigator.pushNamed(context, AppRoutes.acLocationDetail,
+                arguments: bottomBarIndex);
           },
           child: Stack(
             alignment: Alignment.bottomCenter,
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(20.0),
-                child: Container(
+                child: Image.network(
+                  'https://bienhieudep.vn/wp-content/uploads/2021/06/82-Ph%E1%BB%91-m%E1%BB%9Bi-H%C6%B0ng-y%C3%AAn-1-scaled.jpg',
                   width: double.infinity,
                   height: 500,
-                  color: Palette.inputBackground,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Container(
+                      width: double.infinity,
+                      height: 500,
+                      color: Palette.inputBackground,
+                      child: Center(
+                          child:
+                              CircularProgressIndicator()), // Hiển thị khi đang tải
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: double.infinity,
+                      height: 500,
+                      color:
+                          Palette.inputBackground, // Nếu lỗi, hiển thị màu nền
+                    );
+                  },
                 ),
-                // Image.network(
-                //   'https://bienhieudep.vn/wp-content/uploads/2021/06/82-Ph%E1%BB%91-m%E1%BB%9Bi-H%C6%B0ng-y%C3%AAn-1-scaled.jpg', // URL hình ảnh
-                //   width: double.infinity,
-                //   height: 402.0,
-                //   fit: BoxFit.cover,
-                // ),
               ),
-              Positioned(
-                top: 8.0,
-                right: 8.0,
-                child: CircleAvatar(
-                  backgroundColor: Palette.grayTransparent,
-                  child: Icon(
-                    Icons.favorite_border,
-                    color: Palette.nearlyWhite,
-                  ),
-                ),
-              ),
+              // Positioned(
+              //   top: 8.0,
+              //   right: 8.0,
+              //   child: CircleAvatar(
+              //     backgroundColor: Palette.grayTransparent,
+              //     child: Icon(
+              //       Icons.favorite_border,
+              //       color: Palette.nearlyWhite,
+              //     ),
+              //   ),
+              // ),
               Positioned(
                 bottom: 16.0,
                 child: Container(

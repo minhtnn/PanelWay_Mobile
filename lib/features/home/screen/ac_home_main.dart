@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:panelway_mobile/app/app_palette.dart';
 import 'package:panelway_mobile/app/app_routes.dart';
+import 'package:panelway_mobile/core/enum/bottom_bar_page.dart';
+import 'package:panelway_mobile/features/home/view_models/rental_location_viewmodel.dart';
 import 'package:panelway_mobile/features/home/widgets/advertisement_card%20.dart';
 import 'package:panelway_mobile/features/home/widgets/icon_navigation.dart';
+import 'package:provider/provider.dart';
 
 class ACHomeMain extends StatefulWidget {
   final int bottomBarIndex;
@@ -14,8 +17,24 @@ class ACHomeMain extends StatefulWidget {
 }
 
 class _ACHomeMainState extends State<ACHomeMain> {
+  void initState() {
+    super.initState();
+    fetchData(); // Gọi API khi widget khởi tạo
+  }
+
+  void fetchData() async {
+    // print("Fetching data..."); // Kiểm tra fetchData có chạy không
+    // final rentalLocationViewModel =
+    //     Provider.of<RentalLocationViewmodel>(context, listen: false);
+    // var result = await rentalLocationViewModel.getRentalLocationPaging();
+    // print("🎯 Fetching complete: $result"); // Kiểm tra kết quả trả về
+  }
+
   @override
   Widget build(BuildContext context) {
+    final rentalLocationViewModel =
+        Provider.of<RentalLocationViewmodel>(context);
+    rentalLocationViewModel.getRentalLocationPaging();
     return Container(
       child: Align(
         alignment: Alignment.center,
@@ -37,8 +56,9 @@ class _ACHomeMainState extends State<ACHomeMain> {
                         iconData: Symbols.notifications_none,
                         iconWeight: 400,
                         onTap: () {
-                          Navigator.pushNamed(context, AppRoutes.bottombar,
-                              arguments: widget.bottomBarIndex);
+                          Navigator.popAndPushNamed(
+                              context, AppRoutes.bottombar,
+                              arguments: BottomBarPage.notifications.index);
                         }),
                     const SizedBox(width: 15),
                     CircleIconNavigation(
@@ -105,10 +125,11 @@ class _ACHomeMainState extends State<ACHomeMain> {
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: Colors.white,
-                              prefixIcon:
-                                  Icon(Symbols.search, color: Palette.grayTransparent),
+                              prefixIcon: Icon(Symbols.search,
+                                  color: Palette.grayTransparent),
                               hintText: 'Search for...',
-                              hintStyle: TextStyle(color: Palette.grayTransparent),
+                              hintStyle:
+                                  TextStyle(color: Palette.grayTransparent),
                               border: OutlineInputBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(16.0)),
@@ -136,22 +157,26 @@ class _ACHomeMainState extends State<ACHomeMain> {
                             ),
                           ),
                         ),
-                      GestureDetector(
-                        child: Container(
-                          margin: EdgeInsets.only(left: 10),
-                          padding: EdgeInsets.all(16),
-                          child: Icon(Symbols.add, color: Palette.white, weight: 700,),
-                          decoration: BoxDecoration(
-                            color: Palette.blueButton,
-                            borderRadius: BorderRadius.circular(16),
+                        GestureDetector(
+                          child: Container(
+                            margin: EdgeInsets.only(left: 10),
+                            padding: EdgeInsets.all(16),
+                            child: Icon(
+                              Symbols.add,
+                              color: Palette.white,
+                              weight: 700,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Palette.blueButton,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
                           ),
+                          onTap: () {
+                            Navigator.pushNamed(
+                                context, AppRoutes.uploadContent);
+                            // Navigator.pushNamed(context, AppRoutes.uploadSpace);
+                          },
                         ),
-                        onTap: (){
-                          Navigator.pushNamed(context, AppRoutes.uploadContent);
-                          // Navigator.pushNamed(context, AppRoutes.uploadSpace);
-                          
-                        },
-                      ),
                       ],
                     )),
                 SizedBox(height: 16.0),
@@ -163,15 +188,6 @@ class _ACHomeMainState extends State<ACHomeMain> {
                   minDuration: '1 year min',
                   traffic: '50,000 views/day',
                   type: 'Outdoor billboard',
-                ),
-                AdvertisementCard(
-                  imageUrl: '',
-                  title: 'Another advertising',
-                  location: 'District 3, HCM',
-                  price: 'From 400/month',
-                  minDuration: '6 months min',
-                  traffic: '30,000 views/day',
-                  type: 'Indoor billboard',
                 ),
               ],
             ),

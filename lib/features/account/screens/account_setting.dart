@@ -3,6 +3,9 @@ import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:panelway_mobile/app/app_palette.dart';
 import 'package:panelway_mobile/app/app_routes.dart';
 import 'package:panelway_mobile/core/widgets/custom_button.dart';
+import 'package:panelway_mobile/features/auth/screen/login_screen.dart';
+import 'package:panelway_mobile/features/auth/view_models/auth_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class AccountSetting extends StatefulWidget {
   const AccountSetting({super.key});
@@ -71,24 +74,38 @@ class _AccountSettingState extends State<AccountSetting> {
           Expanded(
             child: ListView(
               children: [
-                buildProfileOption(Symbols.person_filled, "Account Profile",
-                    onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.accountInformation);
-                },),
-                
-                buildProfileOption(Symbols.history, "History", onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.history);
-                },),
-                buildProfileOption(Symbols.settings, "Settings", onTap: () {
-                  
-                },),
-                buildProfileOption(Symbols.logout, "Log out", onTap: () {
-                  
-                },)
+                buildProfileOption(
+                  Symbols.person_filled,
+                  "Account Profile",
+                  onTap: () {
+                    Navigator.pushNamed(context, AppRoutes.accountInformation);
+                  },
+                ),
+                buildProfileOption(
+                  Symbols.history,
+                  "History",
+                  onTap: () {
+                    Navigator.pushNamed(context, AppRoutes.history);
+                  },
+                ),
+                buildProfileOption(
+                  Symbols.settings,
+                  "Settings",
+                  onTap: () {},
+                ),
+                buildProfileOption(
+                  Symbols.logout,
+                  "Log out",
+                  onTap: () async {
+                    await context.read<AuthViewModel>().logout();
+                    if (context.mounted) {
+                      Navigator.pushReplacementNamed(context, AppRoutes.login);
+                    }
+                  },
+                )
               ],
             ),
           ),
-          
         ],
       ),
     );

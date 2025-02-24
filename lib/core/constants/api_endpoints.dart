@@ -17,6 +17,7 @@ class ApiEndpoints {
   static String authenticationEndpoint = "$baseUrl/auth";
   static String login = "$authenticationEndpoint/login";
   static String signUp = "$authenticationEndpoint/sign-up";
+  static String refreshToken = "$authenticationEndpoint/refresh-token";
 
   //Account
   static const String _accountEndpoint = "/accounts";
