@@ -1,3 +1,4 @@
+import 'package:panelway_mobile/data/models/rental_location_image.dart';
 import 'package:uuid/uuid.dart';
 
 class RentalLocation {
@@ -14,6 +15,7 @@ class RentalLocation {
   String? status;
   String? spaceProviderId;
   String? managerId;
+  List<RentalLocationImage>? rentalLocationImages;
 
   RentalLocation({
     this.id,
@@ -29,6 +31,7 @@ class RentalLocation {
     this.status,
     this.spaceProviderId,
     this.managerId,
+    this.rentalLocationImages
   });
 
   factory RentalLocation.fromJson(Map<String, dynamic> json) {

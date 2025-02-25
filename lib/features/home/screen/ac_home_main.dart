@@ -30,6 +30,16 @@ class _ACHomeMainState extends State<ACHomeMain> {
   Widget build(BuildContext context) {
     final rentalLocationViewModel =
         Provider.of<RentalLocationViewmodel>(context);
+    if (rentalLocationViewModel.rentalLocationPaging != null &&
+        rentalLocationViewModel.rentalLocationPaging!.items.isNotEmpty &&
+        rentalLocationViewModel
+                .rentalLocationPaging!.items[0].rentalLocationImages !=
+            null &&
+        rentalLocationViewModel
+            .rentalLocationPaging!.items[0].rentalLocationImages!.isNotEmpty) {
+      debugPrint(
+          "Check rental image: ${rentalLocationViewModel.rentalLocationPaging!.items[0].rentalLocationImages![0].imageUrl}");
+    }
     return Container(
       child: Align(
         alignment: Alignment.center,
@@ -190,7 +200,11 @@ class _ACHomeMainState extends State<ACHomeMain> {
                         .rentalLocationPaging!.items
                         .map((e) {
                       return AdvertisementCard(
-                        imageUrl: 'https://bienhieudep.vn/wp-content/uploads/2021/06/82-Ph%E1%BB%91-m%E1%BB%9Bi-H%C6%B0ng-y%C3%AAn-1-scaled.jpg',
+                        // imageUrl:"${e.rentalLocationImages![0].imageUrl}",
+                        imageUrl: (e.rentalLocationImages != null &&
+                                e.rentalLocationImages!.isNotEmpty)
+                            ? e.rentalLocationImages![0].imageUrl!
+                            : "https://mayaptrunghaoquang.com/static/images/cach-nuoi-chim-se.webp",
                         title: e.code ?? "No title",
                         location: e.address ?? "No location",
                         price: '${e.price ?? 0}',
@@ -200,15 +214,6 @@ class _ACHomeMainState extends State<ACHomeMain> {
                       );
                     }).toList(),
                   )
-                // AdvertisementCard(
-                //   imageUrl: '',
-                //   title: 'Billboard advertising',
-                //   location: 'Thủ Đức, District 2, HCM',
-                //   price: 'From 500/month',
-                //   minDuration: '1 year min',
-                //   traffic: '50,000 views/day',
-                //   type: 'Outdoor billboard',
-                // ),
               ],
             ),
           ],

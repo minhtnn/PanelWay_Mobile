@@ -90,6 +90,11 @@ class ApiEndpoints {
   static String rentalLocationApiEndpoint = baseUrl + _rentalLocationEndpoint;
   static String findRentalLocationByIdApiEndpoint = "$rentalLocationApiEndpoint/{id}";
 
+  //RentalLocation
+  static const String _rentalLocationImagesEndpoint = "/rental-location-images";
+  static String rentalLocationImagesApiEndpoint = baseUrl + _rentalLocationImagesEndpoint;
+  static String findRentalLocationImagesByRentalLocationIdApiEndpoint = "$rentalLocationImagesApiEndpoint/rental-location";
+
   //RentalLocationPanelType
   static const String _rentalLocationPanelTypeEndpoint = "/rental-location-panel-types";
   static String rentalLocationPanelTypeApiEndpoint = baseUrl + _rentalLocationPanelTypeEndpoint;

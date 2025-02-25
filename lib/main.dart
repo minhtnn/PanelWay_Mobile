@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:panelway_mobile/app/app_palette.dart';
 import 'package:panelway_mobile/app/app_routes.dart';
 import 'package:panelway_mobile/core/widgets/bottom_bar.dart';
+import 'package:panelway_mobile/data/repositories/rentalLocationImageRepository.dart';
 import 'package:panelway_mobile/data/repositories/rentalLocationRepository.dart';
 import 'package:panelway_mobile/data/services/api_service.dart';
 import 'package:panelway_mobile/features/auth/screen/login_screen.dart';
@@ -29,7 +30,9 @@ void main() {
         ChangeNotifierProvider(
           create: (context) => RentalLocationViewmodel(
               rentalLocationRepository:
-                  RentalLocationRepository(ApiService(navigatorKey))),
+                  RentalLocationRepository(ApiService(navigatorKey)),
+              rentalLocationImageRepository:
+                  RentalLocationImageRepository(ApiService(navigatorKey))),
         )
       ],
       child: MyApp(),
