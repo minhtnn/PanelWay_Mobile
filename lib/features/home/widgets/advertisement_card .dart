@@ -39,7 +39,7 @@ class AdvertisementCard extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(20.0),
                 child: Image.network(
-                  'https://bienhieudep.vn/wp-content/uploads/2021/06/82-Ph%E1%BB%91-m%E1%BB%9Bi-H%C6%B0ng-y%C3%AAn-1-scaled.jpg',
+                  imageUrl,
                   width: double.infinity,
                   height: 500,
                   fit: BoxFit.cover,
@@ -96,7 +96,7 @@ class AdvertisementCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Billboard advertising',
+                          title,
                           style: TextStyle(
                             fontSize: 18.0,
                             fontWeight: FontWeight.bold,
@@ -112,7 +112,7 @@ class AdvertisementCard extends StatelessWidget {
                             ),
                             SizedBox(width: 4.0),
                             Text(
-                              'Thu Duc, District 2, HCM',
+                              location,
                               style: TextStyle(
                                 fontSize: 14.0,
                                 color: Colors.grey.shade700,
@@ -126,7 +126,7 @@ class AdvertisementCard extends StatelessWidget {
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text: 'From 500\$/month\n',
+                                text: 'From ${price}\$/month\n',
                                 style: TextStyle(
                                   fontSize: 12.0,
                                   color: Colors.blue,
@@ -134,21 +134,21 @@ class AdvertisementCard extends StatelessWidget {
                                 ),
                               ),
                               TextSpan(
-                                text: '1 years min\n',
+                                text: '${minDuration} years min\n',
                                 style: TextStyle(
                                   fontSize: 12.0,
                                   color: Colors.grey.shade700,
                                 ),
                               ),
                               TextSpan(
-                                text: 'Traffic: 50.000 views/day\n',
+                                text: '${traffic}\n',
                                 style: TextStyle(
                                   fontSize: 12.0,
                                   color: Colors.grey.shade700,
                                 ),
                               ),
                               TextSpan(
-                                text: 'Type: Outdoor billboard',
+                                text: '${type}',
                                 style: TextStyle(
                                   fontSize: 12.0,
                                   color: Colors.grey.shade700,

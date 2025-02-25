@@ -7,18 +7,23 @@ import "package:panelway_mobile/core/exceptions/api_exception.dart";
 
 class ApiService {
   final GlobalKey<NavigatorState> _navigatorKey;
-  Dio _dio = Dio(BaseOptions(
-    baseUrl: ApiEndpoints.baseUrl,
-  ));
+  late Dio _dio;
 
   ApiService(this._navigatorKey) {
-    _initializeInterceptors(); // Add token interceptor
+    _dio = Dio(BaseOptions(
+      baseUrl: ApiEndpoints.baseUrl,
+    ));
+
+    // Initialize immediately to avoid timing issues
+    _initializeInterceptors();
   }
 
-  void _initializeInterceptors() async {
+  Future<void> _initializeInterceptors() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("auth_token");
-    print("Token: " + token!);
+
+    _dio.interceptors
+        .clear(); // Clear existing interceptors to avoid duplicates
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
@@ -33,6 +38,7 @@ class ApiService {
 
   Future<Response?> get(String endpoint, {Map<String, dynamic>? params}) async {
     try {
+      print(endpoint);
       return await _dio.get(endpoint, queryParameters: params);
     } on DioException catch (e) {
       _handleError(e);

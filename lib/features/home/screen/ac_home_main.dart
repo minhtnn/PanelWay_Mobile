@@ -17,24 +17,19 @@ class ACHomeMain extends StatefulWidget {
 }
 
 class _ACHomeMainState extends State<ACHomeMain> {
+  @override
   void initState() {
     super.initState();
-    fetchData(); // Gọi API khi widget khởi tạo
-  }
-
-  void fetchData() async {
-    // print("Fetching data..."); // Kiểm tra fetchData có chạy không
-    // final rentalLocationViewModel =
-    //     Provider.of<RentalLocationViewmodel>(context, listen: false);
-    // var result = await rentalLocationViewModel.getRentalLocationPaging();
-    // print("🎯 Fetching complete: $result"); // Kiểm tra kết quả trả về
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<RentalLocationViewmodel>(context, listen: false)
+          .getRentalLocationPaging();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final rentalLocationViewModel =
         Provider.of<RentalLocationViewmodel>(context);
-    rentalLocationViewModel.getRentalLocationPaging();
     return Container(
       child: Align(
         alignment: Alignment.center,
@@ -180,15 +175,40 @@ class _ACHomeMainState extends State<ACHomeMain> {
                       ],
                     )),
                 SizedBox(height: 16.0),
-                AdvertisementCard(
-                  imageUrl: '',
-                  title: 'Billboard advertising',
-                  location: 'Thủ Đức, District 2, HCM',
-                  price: 'From 500/month',
-                  minDuration: '1 year min',
-                  traffic: '50,000 views/day',
-                  type: 'Outdoor billboard',
-                ),
+                if (rentalLocationViewModel.isLoading)
+                  Center(child: CircularProgressIndicator())
+                else if (rentalLocationViewModel.error != null)
+                  Center(child: Text("Error: ${rentalLocationViewModel.error}"))
+                else if (rentalLocationViewModel.rentalLocationPaging == null)
+                  Center(child: Text("No data available"))
+                else if (rentalLocationViewModel
+                    .rentalLocationPaging!.items.isEmpty)
+                  Center(child: Text("No items found"))
+                else
+                  Column(
+                    children: rentalLocationViewModel
+                        .rentalLocationPaging!.items
+                        .map((e) {
+                      return AdvertisementCard(
+                        imageUrl: 'https://bienhieudep.vn/wp-content/uploads/2021/06/82-Ph%E1%BB%91-m%E1%BB%9Bi-H%C6%B0ng-y%C3%AAn-1-scaled.jpg',
+                        title: e.code ?? "No title",
+                        location: e.address ?? "No location",
+                        price: '${e.price ?? 0}',
+                        minDuration: '${1}',
+                        traffic: e.description ?? "No description",
+                        type: 'Outdoor billboard',
+                      );
+                    }).toList(),
+                  )
+                // AdvertisementCard(
+                //   imageUrl: '',
+                //   title: 'Billboard advertising',
+                //   location: 'Thủ Đức, District 2, HCM',
+                //   price: 'From 500/month',
+                //   minDuration: '1 year min',
+                //   traffic: '50,000 views/day',
+                //   type: 'Outdoor billboard',
+                // ),
               ],
             ),
           ],

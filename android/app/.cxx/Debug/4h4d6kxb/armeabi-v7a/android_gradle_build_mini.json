@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "C:\\src\\flutter\\packages\\flutter_tools\\gradle\\src\\main\\groovy\\CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "C:\\Users\\N.Minh\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+      "-C",
+      "C:\\Users\\N.Minh- ADMIN\\Documents\\PanelWay\\PanelWay_Mobile\\PanelWay_Mobile\\android\\app\\.cxx\\Debug\\4h4d6kxb\\armeabi-v7a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "C:\\Users\\N.Minh\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+    "-C",
+    "C:\\Users\\N.Minh- ADMIN\\Documents\\PanelWay\\PanelWay_Mobile\\PanelWay_Mobile\\android\\app\\.cxx\\Debug\\4h4d6kxb\\armeabi-v7a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}

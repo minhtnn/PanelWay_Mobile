@@ -25,4 +25,14 @@ class PaginatedResponse<T> {
       totalPages: json['totalPages'],
     );
   }
+    Map<String, dynamic> toJson(Map<String, dynamic> Function(T) toJsonT) {
+    return {
+      'items': items.map((item) => toJsonT(item)).toList(),
+      'total': totalCount,
+      'page': pageIndex,
+      'size': pageSize,
+      'totalPages': totalPages,
+    };
+  }
+
 }

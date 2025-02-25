@@ -1,0 +1,2 @@
+C:/Users/N.Minh- ADMIN/Documents/PanelWay/PanelWay_Mobile/PanelWay_Mobile/android/app/.cxx/Debug/4h4d6kxb/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/N.Minh- ADMIN/Documents/PanelWay/PanelWay_Mobile/PanelWay_Mobile/android/app/.cxx/Debug/4h4d6kxb/armeabi-v7a/CMakeFiles/rebuild_cache.dir

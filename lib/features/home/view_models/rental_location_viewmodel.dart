@@ -24,24 +24,28 @@ class RentalLocationViewmodel extends ChangeNotifier {
       _rentalLocationPaging;
 
   Future<PaginatedResponse<RentalLocation>?> getRentalLocationPaging() async {
+    if (_isLoading) return _rentalLocationPaging;
     _isLoading = true;
+    notifyListeners();
     _error = null;
 
     try {
-          await _rentalLocationRepository.GetRentalLocationsPaging(page, size);
+      var rentalLocationPagingIn = await _rentalLocationRepository
+          .getRentalLocationsPaging(page, size);
       _isLoading = false;
-      return null;
+      notifyListeners();
+      _rentalLocationPaging = rentalLocationPagingIn;
+      return _rentalLocationPaging;
     } on ApiException catch (e) {
       _error = e.message;
       _isLoading = false;
       notifyListeners();
       return null;
     } catch (e) {
-      _error = 'Unexpected error occurred';
+      _error = 'Unexpected error occurred: ${e.toString()}';
       _isLoading = false;
       notifyListeners();
-      throw Exception("Error 2: " + e.toString());
-      return null;
+      throw Exception(e.toString());
     }
   }
 }

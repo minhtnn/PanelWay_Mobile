@@ -10,14 +10,16 @@ import 'package:provider/provider.dart';
 import 'package:panelway_mobile/data/repositories/authenticationRepository.dart';
 import 'package:panelway_mobile/data/services/storage_service.dart';
 import 'package:panelway_mobile/features/auth/view_models/auth_viewmodel.dart';
-import 'package:panelway_mobile/features/home/screen/ac_home_main.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() {
+  final apiService = ApiService(navigatorKey);
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(
     MultiProvider(
       providers: [
+        Provider<ApiService>.value(value: apiService),
         ChangeNotifierProvider(
           create: (context) => AuthViewModel(
             authRepository: AuthenticationRepository(ApiService(navigatorKey)),
@@ -73,7 +75,6 @@ class _AuthWrapperState extends State<AuthWrapper> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<AuthViewModel>().checkLoginStatus();
     });
-    
   }
 
   @override
@@ -81,17 +82,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
     return Consumer<AuthViewModel>(
       builder: (context, authVM, _) {
         // If logged in, show HomeView, otherwise show LoginView
-        return authVM.isLoggedIn ? MultiProvider(
-                providers: [
-                  ChangeNotifierProvider(
-                    create: (context) => RentalLocationViewmodel(
-                      rentalLocationRepository: RentalLocationRepository(ApiService(navigatorKey)),
-                    ),
-                  ),
-                ],
-                child: BottomBarWidget(),
-              )
-            : LoginScreen();
+        return authVM.isLoggedIn ? BottomBarWidget() : LoginScreen();
       },
     );
   }

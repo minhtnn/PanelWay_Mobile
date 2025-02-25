@@ -8,8 +8,8 @@ class RentalLocation {
   String? address;
   String? panelSize;
   String? description;
-  DateTime? postDate;
-  DateTime? availableDate;
+  String? postDate;
+  String? availableDate;
   String? price;
   String? status;
   String? spaceProviderId;
@@ -33,7 +33,7 @@ class RentalLocation {
 
   factory RentalLocation.fromJson(Map<String, dynamic> json) {
     return RentalLocation(
-      id: json['id']?.toString(), // 🔥 Chuyển id thành String
+      id: json['id']?.toString(),
       code: json['code'],
       locationX: json['locationX'],
       locationY: json['locationY'],
@@ -42,7 +42,7 @@ class RentalLocation {
       description: json['description'],
       postDate: json['postDate'],
       availableDate: json['availableDate'] ,
-      price: json["price"], // 🔥 Fix lỗi ép kiểu price
+      price: json["price"]?.toString(), // 🔥 Fix lỗi ép kiểu price
       status: json['status'],
       spaceProviderId: json['spaceProviderId'],
       managerId: json['managerId'],
@@ -58,8 +58,8 @@ class RentalLocation {
       "address": address,
       "panelSize": panelSize,
       "description": description,
-      "postDate": postDate?.toIso8601String(),
-      "availableDate": availableDate?.toIso8601String(),
+      "postDate": postDate,
+      "availableDate": availableDate,
       "price": price,
       "status": status,
       "spaceProviderId": spaceProviderId,

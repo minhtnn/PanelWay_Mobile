@@ -1,3 +1,4 @@
+import 'dart:convert';
 
 import 'package:panelway_mobile/core/constants/api_endpoints.dart';
 import 'package:panelway_mobile/data/models/paginated_response.dart';
@@ -9,10 +10,17 @@ class RentalLocationRepository {
 
   RentalLocationRepository(this._apiService);
 
-  Future<PaginatedResponse<RentalLocation>?> GetRentalLocationsPaging(
+  Future<PaginatedResponse<RentalLocation>?> getRentalLocationsPaging(
       int page, int size) async {
-        var response = _apiService.get(ApiEndpoints.rentalLocationApiEndpoint);
-        print("Check: " + response.toString());
-        return null;
+    try {
+      var response =
+          await _apiService.get(ApiEndpoints.rentalLocationApiEndpoint);
+      var rentalLocationPaging = PaginatedResponse<RentalLocation>.fromJson(
+          jsonDecode(response.toString()),
+          (item) => RentalLocation.fromJson(item));
+      return rentalLocationPaging;
+    } catch (e) {
+      throw Exception(e.toString());
+    }
   }
 }
