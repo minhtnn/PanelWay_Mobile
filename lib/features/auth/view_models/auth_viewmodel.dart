@@ -26,13 +26,35 @@ class AuthViewModel extends ChangeNotifier {
   String? get error => _error;
   Account? get account => _account;
 
+  bool _isInitializing = true;
+  bool get isInitializing => _isInitializing;
+
   Future<void> checkLoginStatus() async {
+    _isInitializing = true;
+    notifyListeners();
+
     final savedAccount = await _storageService.getAccount();
     if (savedAccount != null && savedAccount.accessToken != null) {
       _isLoggedIn = true;
       _account = savedAccount;
       notifyListeners();
     }
+    _isInitializing = false;
+    notifyListeners();
+  }
+
+  Future<Account?> getAccount() async {
+    try {
+      final accountCheck = await _storageService.getAccount();
+      if (accountCheck != null) {
+        // print("Account retrieved from storage: ${accountCheck.toJson()}");
+        _account = accountCheck;
+        return _account;
+      }
+    } catch (e) {
+      print("Error retrieving account: $e");
+    }
+    return null;
   }
 
   Future<bool> login(String email, String password, String role) async {
@@ -42,6 +64,7 @@ class AuthViewModel extends ChangeNotifier {
     try {
       final account = await _authRepo.login(email, password, role);
       await _storageService.saveAccount(account!);
+
       _account = account;
       _isLoggedIn = true;
       _isLoading = false;
@@ -61,7 +84,7 @@ class AuthViewModel extends ChangeNotifier {
   }
 
   Future<OtpResponse?> SendOTP(String phoneNumber) async {
-    try{
+    try {
       var response = await _authRepo.sendOTP(phoneNumber);
       return response;
     } on ApiException catch (e) {
@@ -70,6 +93,7 @@ class AuthViewModel extends ChangeNotifier {
       throw ApiException('Unexpected error during login');
     }
   }
+
   Future<bool> register(RegisterRequest request) async {
     _isLoading = true;
     _error = null;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:panelway_mobile/app/app_palette.dart';
+import 'package:panelway_mobile/features/auth/view_models/auth_viewmodel.dart';
 import 'package:panelway_mobile/features/package_plan/view_model/subcription_view_model.dart';
 import 'package:panelway_mobile/features/package_plan/widgets/package_information.dart';
 import 'package:provider/provider.dart';
@@ -18,13 +19,19 @@ class _PackagePlanState extends State<PackagePlan> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<SubcriptionViewModel>(context, listen: false)
           .getSubcriptions();
+      final authVM = Provider.of<AuthViewModel>(context, listen: false);
+      authVM.getAccount().then((_) {
+        if (mounted) {
+          setState(() {}); // Force refresh if needed
+        }
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final _subcriptionViewModel = Provider.of<SubcriptionViewModel>(context);
-    var subcriptions = _subcriptionViewModel.subcriptions;
+    final subcriptionViewModel = Provider.of<SubcriptionViewModel>(context);
+    var subcriptions = subcriptionViewModel.subcriptions;
     return ListView(
       padding: EdgeInsets.only(left: 20, right: 20, top: 50, bottom: 100),
       children: [

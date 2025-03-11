@@ -6,7 +6,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+7
 
 environment:
-  sdk: ">=3.3.0 <4.0.0"
+  sdk: ">=3.2.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -36,8 +36,11 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-
-
+    - lib\assets\Icon.png
+    - lib\assets\default-avatar.png
+    - lib\assets\panelway-black-icon.png
+    - lib\assets\panelway-white-icon.png
+    - lib\assets\Image-not-found.png
 flutter_icons:
   android: true
   ios: true

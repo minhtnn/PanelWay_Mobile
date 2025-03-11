@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:panelway_mobile/app/app_palette.dart';
 import 'package:panelway_mobile/app/app_routes.dart';
 import 'package:panelway_mobile/core/widgets/bottom_bar.dart';
@@ -20,34 +21,34 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   final apiService = ApiService(navigatorKey);
+  final storageService = StorageService();
   runApp(
     MultiProvider(
       providers: [
         Provider<ApiService>.value(value: apiService),
+        Provider<StorageService>.value(value: storageService),
         ChangeNotifierProvider(
           create: (context) => AuthViewModel(
-            authRepository: AuthenticationRepository(ApiService(navigatorKey)),
-            storageService: StorageService(),
+            authRepository:
+                AuthenticationRepository(apiService), // Use the same instance
+            storageService: storageService
           ),
         ),
         ChangeNotifierProvider(
           create: (context) => RentalLocationViewmodel(
-              rentalLocationRepository:
-                  RentalLocationRepository(ApiService(navigatorKey)),
+              rentalLocationRepository: RentalLocationRepository(apiService),
               rentalLocationImageRepository:
-                  RentalLocationImageRepository(ApiService(navigatorKey))),
+                  RentalLocationImageRepository(apiService)),
         ),
         ChangeNotifierProvider(
           create: (context) => RetalLocationDetailViewmodel(
-              rentalLocationRepository:
-                  RentalLocationRepository(ApiService(navigatorKey)),
+              rentalLocationRepository: RentalLocationRepository(apiService),
               rentalLocationImageRepository:
-                  RentalLocationImageRepository(ApiService(navigatorKey))),
+                  RentalLocationImageRepository(apiService)),
         ),
         ChangeNotifierProvider(
           create: (context) => SubcriptionViewModel(
-              subcriptionrepository:
-                  Subcriptionrepository(ApiService(navigatorKey))),
+              subcriptionrepository: Subcriptionrepository(apiService)),
         ),
       ],
       child: MyApp(),
@@ -58,6 +59,9 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<AuthViewModel>(context, listen: false).checkLoginStatus();
+    });
     return MaterialApp(
       navigatorKey: navigatorKey,
       title: 'Login App',
@@ -99,6 +103,15 @@ class _AuthWrapperState extends State<AuthWrapper> {
   Widget build(BuildContext context) {
     return Consumer<AuthViewModel>(
       builder: (context, authVM, _) {
+        // Show loading indicator while checking login status
+        if (authVM.isInitializing) {
+          return Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+
         // If logged in, show HomeView, otherwise show LoginView
         return authVM.isLoggedIn ? BottomBarWidget() : LoginScreen();
       },

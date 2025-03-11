@@ -3,6 +3,8 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:panelway_mobile/app/app_palette.dart';
 import 'package:panelway_mobile/app/app_routes.dart';
 import 'package:panelway_mobile/core/enum/bottom_bar_page.dart';
+import 'package:panelway_mobile/core/enum/user_role.dart';
+import 'package:panelway_mobile/features/auth/view_models/auth_viewmodel.dart';
 import 'package:panelway_mobile/features/home/view_models/rental_location_viewmodel.dart';
 import 'package:panelway_mobile/features/home/widgets/advertisement_card%20.dart';
 import 'package:panelway_mobile/features/home/widgets/icon_navigation.dart';
@@ -31,6 +33,13 @@ class _ACHomeMainState extends State<ACHomeMain> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Provider.of<RentalLocationViewmodel>(context, listen: false)
             .getRentalLocationPaging();
+        Provider.of<AuthViewModel>(context, listen: false).getAccount();
+        final authVM = Provider.of<AuthViewModel>(context, listen: false);
+        authVM.getAccount().then((_) {
+          if (mounted) {
+            setState(() {}); // Force refresh if needed
+          }
+        });
         _initialLoadDone = true;
       });
     }
@@ -38,6 +47,8 @@ class _ACHomeMainState extends State<ACHomeMain> {
 
   @override
   Widget build(BuildContext context) {
+    final authViewModel = Provider.of<AuthViewModel>(context);
+    var account = authViewModel.account;
     final rentalLocationViewModel =
         Provider.of<RentalLocationViewmodel>(context);
     if (rentalLocationViewModel.rentalLocationPaging != null &&
@@ -184,9 +195,18 @@ class _ACHomeMainState extends State<ACHomeMain> {
                             ),
                           ),
                           onTap: () {
-                            Navigator.pushNamed(
-                                context, AppRoutes.uploadContent);
-                            // Navigator.pushNamed(context, AppRoutes.uploadSpace);
+                            debugPrint("Role: ${account!.role}");
+                            if (account.role ==
+                                UserRoleEnum.AdvertisingClient.name) {
+                              Navigator.pushNamed(
+                                  context, AppRoutes.uploadContent);
+                            }
+                            if (account.role ==
+                                UserRoleEnum.SpaceProvider.name) {
+                              Navigator.pushNamed(
+                                  context, AppRoutes.uploadSpace);
+                            }
+
                           },
                         ),
                       ],

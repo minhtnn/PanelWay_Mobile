@@ -19,7 +19,9 @@ class AuthenticationRepository {
   Future<Account?> login(String phoneNumber, String password, String role) async {
     try {
       var data = LoginRequest(phoneNumber: phoneNumber, password: password, role: role);
+      
       var response = await _apiService.post(ApiEndpoints.login, data.toJson());
+
       if (response == null || response.data == null) {
         throw ApiException('Login failed: No response from server');
       }
@@ -28,8 +30,10 @@ class AuthenticationRepository {
       await saveToken(account.accessToken!);
       return account;
     } on ApiException catch (e) {
+      debugPrint("Error in login repo: " +e.message + e.statusCode.toString());
       throw ApiException(e.message, statusCode: e.statusCode);
     } catch (e) {
+      debugPrint("Error in login repo: " + e.toString());
       throw ApiException('Unexpected error during login');
     }
   }

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:panelway_mobile/app/app_palette.dart';
 import 'package:panelway_mobile/app/app_routes.dart';
-import 'package:panelway_mobile/core/widgets/custom_button.dart';
-import 'package:panelway_mobile/features/auth/screen/login_screen.dart';
 import 'package:panelway_mobile/features/auth/view_models/auth_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -15,8 +13,39 @@ class AccountSetting extends StatefulWidget {
 }
 
 class _AccountSettingState extends State<AccountSetting> {
+  bool _initialLoadDone = false;
+  @override
+  void initState() {
+    super.initState();
+    // Only load data once when widget is created
+    _loadDataOnce();
+  }
+
+  void _loadDataOnce() {
+    if (!_initialLoadDone) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final authVM = Provider.of<AuthViewModel>(context, listen: false);
+        authVM.getAccount().then((_) {
+          if (mounted) {
+            setState(() {}); // Force refresh if needed
+          }
+        });
+        _initialLoadDone = true;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final authViewModel = Provider.of<AuthViewModel>(context);
+    var account = authViewModel.account;
+
+    // Show loading if account is null
+    if (account == null) {
+      return Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
     return Container(
       padding: EdgeInsets.only(top: 50, right: 10, left: 10),
       child: Column(
@@ -48,11 +77,11 @@ class _AccountSettingState extends State<AccountSetting> {
                 ),
                 SizedBox(height: 8),
                 Text(
-                  "Nguyen Van A",
+                  account.fullName ?? "Unavailable",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "Panelway@gmail.com",
+                  account.email??"Unavailable",
                   style: TextStyle(fontSize: 16, color: Colors.grey),
                 ),
                 SizedBox(height: 8),

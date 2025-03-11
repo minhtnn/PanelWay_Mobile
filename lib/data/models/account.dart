@@ -1,7 +1,3 @@
-import 'dart:ui';
-
-import 'package:uuid/uuid.dart';
-
 class Account {
   String? accessToken;
   String? id;
@@ -56,33 +52,55 @@ class Account {
         gender: accountResponse['gender'],
         email: accountResponse['email'],
         phoneNumber: accountResponse['phoneNumber'],
-        username: accountResponse['username'],
+        username: accountResponse['userName'],
         password: accountResponse['password'],
-        createdAt: accountResponse['createdAt'],
-        updatedAt: accountResponse['updatedAt'],
+        createdAt: DateTime.tryParse(accountResponse['createdAt'] ?? ''),
+        updatedAt: DateTime.tryParse(accountResponse['updatedAt'] ?? ''),
         userStatus: accountResponse['userStatus'],
         verificationStatus: accountResponse['verificationStatus']);
   }
 
-  Map<String, dynamic> toJson(){
+  factory Account.fromJson2(Map<String, dynamic> json) {
+  return Account(
+    accessToken: json['jwtToken'],
+    id: json['id'],  // Kiểm tra xem có đúng key không
+    avatarUrl: json['avatarUrl'],
+    accountStatus: json['accountStatus'],
+    role: json['role'],
+    individualPoint: json['individualPoint'],
+    userId: json['userId'],
+    fullName: json['fullName'],
+    gender: json['gender'],
+    email: json['email'],
+    phoneNumber: json['phoneNumber'],
+    username: json['username'],
+    password: json['password'],
+    createdAt: DateTime.tryParse(json['createdAt'] ?? ''),
+    updatedAt: DateTime.tryParse(json['createdAt'] ?? ''),
+    verificationStatus: json['verificationStatus'],
+  );
+}
+
+
+  Map<String, dynamic> toJson() {
     return {
       "jwtToken": accessToken,
-        "id": id,
-        "avatarUrl": avatarUrl,
-        "accountStatus": accountStatus,
-        "role": role,
-        "individualPoint": individualPoint,
-        "userId": userId,
-        "fullName": fullName,
-        "gender": gender,
-        "email": email,
-        "phoneNumber": phoneNumber,
-        "username": username,
-        "password": password,
-        "createdAt": createdAt,
-        "updatedAt": updatedAt,
-        // "userStatus": userStatus,
-        "verificationStatus": verificationStatus
+      "id": id,
+      "avatarUrl": avatarUrl,
+      "accountStatus": accountStatus,
+      "role": role,
+      "individualPoint": individualPoint,
+      "userId": userId,
+      "fullName": fullName,
+      "gender": gender,
+      "email": email,
+      "phoneNumber": phoneNumber,
+      "username": username,
+      "password": password,
+      "createdAt": createdAt.toString(),
+      "updatedAt": updatedAt.toString(),
+      // "userStatus": userStatus,
+      "verificationStatus": verificationStatus
     };
   }
 }

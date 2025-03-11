@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:panelway_mobile/app/app_palette.dart';
 import 'package:panelway_mobile/app/app_routes.dart';
-import 'package:panelway_mobile/core/constants/role_constant.dart';
 import 'package:panelway_mobile/core/widgets/custom_button.dart';
 import 'package:panelway_mobile/core/widgets/custom_field.dart';
 import 'package:panelway_mobile/data/payloads/requests/register_request.dart';

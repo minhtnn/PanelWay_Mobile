@@ -226,26 +226,27 @@ class AdvertisementCard extends StatelessWidget {
       width: double.infinity,
       height: 500,
       color: Palette.inputBackground,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Symbols.broken_image_rounded,
-            fill: 1,
-            color: Palette.dismissibleBackground,
-            size: 80,
-          ),
-          SizedBox(height: 12),
-          Text(
-            "Image not available",
-            style: TextStyle(
-              color: Palette.grey,
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
+      child: Image.asset("lib\\assets\\Image-not-found.png"),
+      // Column(
+      //   mainAxisAlignment: MainAxisAlignment.center,
+      //   children: [
+      //     Icon(
+      //       Symbols.broken_image_rounded,
+      //       fill: 1,
+      //       color: Palette.dismissibleBackground,
+      //       size: 80,
+      //     ),
+      //     SizedBox(height: 12),
+      //     Text(
+      //       "Image not available",
+      //       style: TextStyle(
+      //         color: Palette.grey,
+      //         fontSize: 16,
+      //         fontWeight: FontWeight.w500,
+      //       ),
+      //     ),
+      //   ],
+      // ),
     );
   }
 }

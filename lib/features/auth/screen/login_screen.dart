@@ -130,20 +130,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              // authViewModel.isLoading
-              //     ? const Align(
-              //         child: CircularProgressIndicator(),
-              //       )
-              //     : CustomButton(),
-              // CustomButton(
-              //   functionName: "Google",
-              //   onPressed: () {},
-              //   buttonBackgroundColor: Palette.whiteButton,
-              //   textColor: Palette.darkerText,
-              //   icon: Icons.circle,
-              //   hasBorder: true,
-              // ),
-              // const SizedBox(height: 20),
               Align(
                 alignment: Alignment.center,
                 child: RichText(

@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:panelway_mobile/data/models/account.dart';
 
@@ -8,14 +8,22 @@ class StorageService {
   static const _accountKey = 'account_data';
 
   Future<void> saveAccount(Account account) async {
-    final accountJson = json.encode(account.toJson());
-    await _storage.write(key: _accountKey, value: accountJson);
+    try {
+      final accountJson = json.encode(account.toJson());
+      // print("Saving account in save account method: ${accountJson}");
+
+      await _storage.write(key: _accountKey, value: accountJson);
+      // print("Account saved successfully");
+    } catch (e) {
+      print("Error saving account: $e");
+    }
   }
 
   Future<Account?> getAccount() async {
     final accountJson = await _storage.read(key: _accountKey);
     if (accountJson != null) {
-      return Account.fromJson(json.decode(accountJson));
+      // var account = Account.fromJson2(json.decode(accountJson));
+      return Account.fromJson2(json.decode(accountJson));
     }
     return null;
   }

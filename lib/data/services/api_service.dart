@@ -38,7 +38,7 @@ class ApiService {
 
   Future<Response?> get(String endpoint, {Map<String, dynamic>? params}) async {
     try {
-      // print("🔵 Requesting: $endpoint with params: $params");
+      print("🔵 Requesting: $endpoint with params: $params");
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString("auth_token");
       var response = await _dio.get(
@@ -47,7 +47,7 @@ class ApiService {
         options: Options(headers: {"Content-Type": "application/json"}),
       );
 
-      // print("✅ Response received: ${response.data}");
+      print("✅ Response received: ${response.data}");
       return response;
     } on DioException catch (e) {
       print("❌ DioException: ${e.message}");
