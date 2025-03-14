@@ -7,6 +7,7 @@ class Subscription{
   String? features;
   String? status;
   String? duration;
+  int? priorty;
 
   Subscription({
     this.id,
@@ -15,7 +16,8 @@ class Subscription{
     this.price,
     this.features,
     this.status,
-    this.duration
+    this.duration,
+    this.priorty
   });
 
   factory Subscription.fromJson(Map<String, dynamic> json){
@@ -26,7 +28,8 @@ class Subscription{
       price : json['price'].toString(),
       features : json['features'].toString(),
       status : json['status'].toString(),
-      duration : json['duration'].toString()
+      duration : json['duration'].toString(),
+      priorty: json['priority']??0
     );
   }
 
@@ -38,7 +41,8 @@ class Subscription{
       "price" : price,
       "features" : features,
       "status" : status,
-      "duration" : duration
+      "duration" : duration,
+      "priority" : priorty
     };
   }
 }

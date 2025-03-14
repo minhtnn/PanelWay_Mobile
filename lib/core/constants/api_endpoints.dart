@@ -8,7 +8,7 @@ class ServerConstant{
 class ApiEndpoints {
   //Base URL
   // static String localhost = ServerConstant.serverURL;
-  static String localhost = "https://panelway.online";
+  static String localhost = "https://staging.panelway.online";
   static const String _rootEndPoint = "/api";
   static const String _apiVersion = "/v1";
   static const String _apiEndpoint = _rootEndPoint + _apiVersion;

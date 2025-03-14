@@ -70,7 +70,7 @@ class BackButtonCustom extends StatelessWidget {
           child: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.black),
             onPressed: () {
-              Navigator.pushNamed(
+              Navigator.popAndPushNamed(
                   context, backToRoute, arguments: previousPage); // Quay lại trang trước đó
             },
           ),

@@ -30,3 +30,19 @@ extension RentalTimeUnitExtension on RentalTimeUnit {
 List<Map<String, String>> getRentalTimeUnitAsMap() {
   return RentalTimeUnit.values.map((e) => {"label": e.lable, "value": e.name}).toList();
 }
+
+enum PayOsStatusEnum {EXPIRED, CANCELLED, PAID, PENDING }
+extension PayOsStatusExtension on PayOsStatusEnum {
+  String get label {
+    switch (this) {
+      case PayOsStatusEnum.EXPIRED:
+        return "EXPIRED";
+      case PayOsStatusEnum.CANCELLED:
+        return "CANCELLED";
+      case PayOsStatusEnum.PAID:
+        return "PAID";
+      case PayOsStatusEnum.PENDING:
+        return "PENDING";
+    }
+  }
+}

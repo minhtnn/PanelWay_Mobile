@@ -15,6 +15,7 @@ import 'package:panelway_mobile/features/home/screen/ac_location_detail.dart';
 import 'package:panelway_mobile/features/home/screen/ac_map_screen.dart';
 import 'package:panelway_mobile/features/notification/screen/notification_list_screen.dart';
 import 'package:panelway_mobile/features/history/screen/history.dart';
+import 'package:panelway_mobile/features/payment/screens/payment.dart';
 
 class AppRoutes {
   static const String login = '/login';
@@ -35,6 +36,7 @@ class AppRoutes {
   static const String uploadContent = "/upload-ad-content";
   static const String uploadSpace = "/upload-space";
   static const String history = "/history";
+  static const String qrPayment = "/payment";
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -81,6 +83,9 @@ class AppRoutes {
             builder: (cont) => BottomBarWidget(
                   pageIndex: previousPage,
                 ));
+      case qrPayment:
+        final String qrCode = settings.arguments as String? ?? "";
+        return MaterialPageRoute(builder: (_) => QRCodeScreen(qrCodeData: qrCode,));
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

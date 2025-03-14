@@ -1,12 +1,13 @@
-import 'package:uuid/uuid.dart';
+import 'package:panelway_mobile/data/models/subscription.dart';
 
 class UserSubscription{
-  Uuid? id;
-  Uuid? accountId;
-  Uuid? subscriptionId;
+  String? id;
+  String? accountId;
+  String? subscriptionId;
   DateTime? startDate;
   DateTime? endDate;
   String? status;
+  Subscription? subscription;
 
   UserSubscription({
     this.id,
@@ -14,7 +15,8 @@ class UserSubscription{
     this.subscriptionId,
     this.startDate,
     this.endDate,
-    this.status
+    this.status,
+    this.subscription
   });
 
   factory UserSubscription.fromJson(Map<String, dynamic> json){
@@ -22,8 +24,8 @@ class UserSubscription{
       id : json['id'],
       accountId : json['accountId'],
       subscriptionId : json['subscriptionId'],
-      startDate : json['startDate'],
-      endDate : json['endDate'],
+      startDate: json['startDate'] != null ? DateTime.parse(json['startDate']) : null,
+      endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
       status : json['status']
     );
   }

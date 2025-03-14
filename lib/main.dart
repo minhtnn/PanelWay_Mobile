@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:panelway_mobile/app/app_palette.dart';
 import 'package:panelway_mobile/app/app_routes.dart';
 import 'package:panelway_mobile/core/widgets/bottom_bar.dart';
+import 'package:panelway_mobile/data/repositories/payosRepository.dart';
 import 'package:panelway_mobile/data/repositories/rentalLocationImageRepository.dart';
 import 'package:panelway_mobile/data/repositories/rentalLocationRepository.dart';
 import 'package:panelway_mobile/data/repositories/subcriptionRepository.dart';
@@ -11,6 +12,7 @@ import 'package:panelway_mobile/features/auth/screen/login_screen.dart';
 import 'package:panelway_mobile/features/home/view_models/rental_location_viewmodel.dart';
 import 'package:panelway_mobile/features/home/view_models/retal_location_detail_viewmodel.dart';
 import 'package:panelway_mobile/features/package_plan/view_model/subcription_view_model.dart';
+import 'package:panelway_mobile/features/payment/screens/payment.dart';
 import 'package:provider/provider.dart';
 import 'package:panelway_mobile/data/repositories/authenticationRepository.dart';
 import 'package:panelway_mobile/data/services/storage_service.dart';
@@ -29,10 +31,9 @@ void main() {
         Provider<StorageService>.value(value: storageService),
         ChangeNotifierProvider(
           create: (context) => AuthViewModel(
-            authRepository:
-                AuthenticationRepository(apiService), // Use the same instance
-            storageService: storageService
-          ),
+              authRepository:
+                  AuthenticationRepository(apiService), // Use the same instance
+              storageService: storageService),
         ),
         ChangeNotifierProvider(
           create: (context) => RentalLocationViewmodel(
@@ -48,7 +49,8 @@ void main() {
         ),
         ChangeNotifierProvider(
           create: (context) => SubcriptionViewModel(
-              subcriptionrepository: Subcriptionrepository(apiService)),
+              subcriptionrepository: Subcriptionrepository(apiService),
+              payosRepository: Payosrepository(apiService)),
         ),
       ],
       child: MyApp(),
@@ -79,6 +81,7 @@ class MyApp extends StatelessWidget {
           bottomAppBarTheme: BottomAppBarTheme(
               color: Colors.white, shadowColor: Palette.shadowForButton)),
       home: AuthWrapper(),
+
       onGenerateRoute: AppRoutes.generateRoute,
     );
   }
