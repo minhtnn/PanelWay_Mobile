@@ -3,8 +3,10 @@ import 'package:panelway_mobile/core/exceptions/api_exception.dart';
 import 'package:panelway_mobile/data/models/subscription.dart';
 import 'package:panelway_mobile/data/models/user_subscription.dart';
 import 'package:panelway_mobile/data/payloads/requests/create_payos_request.dart';
+import 'package:panelway_mobile/data/payloads/requests/usersubscriptionregisterRequest.dart';
 import 'package:panelway_mobile/data/payloads/responses/payos_check_response.dart';
 import 'package:panelway_mobile/data/payloads/responses/payos_qr_response.dart';
+import 'package:panelway_mobile/data/payloads/responses/userSubscriptionRegisterResponse.dart';
 import 'package:panelway_mobile/data/repositories/payosRepository.dart';
 import 'package:panelway_mobile/data/repositories/subcriptionRepository.dart';
 
@@ -148,5 +150,42 @@ class SubcriptionViewModel extends ChangeNotifier {
     } finally {
       _isLoading = false;
     }
+  }
+
+  Future<UsersubscriptionregisterResponse?> registerSubscription(UsersubscriptionregisterRequest request) async {
+    _isLoading = true;
+    notifyListeners();
+    _error = null;
+    try {
+      var response = await _payosrepository.registerUserSubscription(request);
+
+      if (response != null) {
+        _isLoading = false;
+
+        notifyListeners();
+        return response;
+      }
+      _isLoading = false;
+      notifyListeners();
+      return null;
+    } on ApiException catch (e) {
+      _error = e.message;
+      _isLoading = false;
+      notifyListeners();
+      return null;
+    } catch (e) {
+      _error = 'Unexpected error occurred: ${e.toString()}';
+      _isLoading = false;
+      notifyListeners();
+      throw Exception(e.toString());
+    } finally {
+      _isLoading = false;
+    }
+  }
+
+  Future<void> clearData() async {
+    _subcriptions = null;
+    _payosQrResponse = null;
+    _userSubscription = null;
   }
 }

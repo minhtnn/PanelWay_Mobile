@@ -7,18 +7,22 @@ import 'package:panelway_mobile/core/enum/bottom_bar_page.dart';
 import 'package:panelway_mobile/core/enum/status_enum.dart';
 import 'package:panelway_mobile/core/widgets/back_page.dart';
 import 'package:panelway_mobile/core/widgets/custom_button.dart';
+import 'package:panelway_mobile/data/payloads/requests/usersubscriptionregisterRequest.dart';
 import 'package:panelway_mobile/features/auth/view_models/auth_viewmodel.dart';
 import 'package:panelway_mobile/features/package_plan/view_model/subcription_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:intl/intl.dart';
 
 class QRCodeScreen extends StatefulWidget {
   final String qrCodeData;
+  final String subscriptionId;
   final int timeoutSeconds;
 
   const QRCodeScreen({
     super.key,
     required this.qrCodeData,
+    required this.subscriptionId,
     this.timeoutSeconds = 180,
   });
 
@@ -99,7 +103,7 @@ class _QRCodeScreenState extends State<QRCodeScreen>
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: const Text("Payment Successful"),
         content: const Text(
           "Your payment has been successfully processed.",
@@ -110,27 +114,49 @@ class _QRCodeScreenState extends State<QRCodeScreen>
         ),
         actions: [
           TextButton(
-            onPressed: () {
-              Navigator.pop(context); // Close dialog
+            onPressed: () async {
+              Navigator.pop(dialogContext); // Close dialog using dialogContext
+
+              // Check if widget is still mounted before proceeding
+              if (!mounted) return;
+
+              // Capture the context before async operations
+              final currentContext = context;
 
               // Refresh subscriptions before navigating back
-              final subscriptionVM =
-                  Provider.of<SubcriptionViewModel>(context, listen: false);
-              final authVM = Provider.of<AuthViewModel>(context, listen: false);
+              final subscriptionVM = Provider.of<SubcriptionViewModel>(
+                  currentContext,
+                  listen: false);
+              final authVM =
+                  Provider.of<AuthViewModel>(currentContext, listen: false);
+              authVM.getAccount();
+              var account = authVM.account;
+              if (account != null && account.id != null) {
+                DateTime now = DateTime.now().toUtc();
 
-              // Reload subscriptions list
-              subscriptionVM.getSubcriptions();
+                var newUserSubscription = UsersubscriptionregisterRequest(
+                  accountId: account.id ?? "",
+                  subscriptionId: widget.subscriptionId,
+                  startDate: now,
+                );
+                var register = await subscriptionVM
+                    .registerSubscription(newUserSubscription);
+                if (register != null) {
+                  subscriptionVM.clearData();
+                  // Reload subscriptions list
+                  subscriptionVM.getSubcriptions();
 
-              // Reload current subscription
-              authVM.getAccount().then((account) {
-                if (account != null && account.id != null) {
+                  // Reload current subscription
                   subscriptionVM.getCurrentSubcription(
                       account.id ?? "", "Active");
                 }
-              });
+              }
+
+              // Check again if still mounted before navigation
+              if (!mounted) return;
 
               // Navigate to bottom bar page
-              Navigator.popAndPushNamed(context, AppRoutes.bottombar,
+              Navigator.of(currentContext).popAndPushNamed(AppRoutes.bottombar,
                   arguments: BottomBarPage.packagePlan.index);
             },
             style: const ButtonStyle(

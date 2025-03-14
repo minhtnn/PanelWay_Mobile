@@ -107,9 +107,10 @@ class _PackagePlanState extends State<PackagePlan> {
                               await subscriptionViewModel.getPayOsQr(request);
                           if (payosQrResponse != null) {
                             Navigator.pushNamed(context, AppRoutes.qrPayment,
-                                  arguments: payosQrResponse.qrCode);
-                            // Navigator.pushNamed(context, AppRoutes.qrPayment,
-                            //     arguments: payosCheckResponse.qrCode);
+                                arguments: {
+                                  'qrCode': payosQrResponse.qrCode,
+                                  'subscriptionId': e.id ?? "",
+                                });
                           }
                         },
                   featureList: e.features != null && e.features!.isNotEmpty

@@ -70,6 +70,7 @@ class ApiService {
           "Content-Type": "application/json"
         }), // Explicit JSON format
       );
+      print("✅ Response received: ${response.data}");
       return response;
     } on DioException catch (e) {
       debugPrint("Dio error: ${e.message}");

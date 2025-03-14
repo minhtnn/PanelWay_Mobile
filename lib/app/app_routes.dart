@@ -64,7 +64,9 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => MapScreen());
       case acLocationDetail:
         final String? rentalLocationId = settings.arguments as String?;
-        return MaterialPageRoute(builder: (_) => ACLocationDetail(rentalLocationId: rentalLocationId));
+        return MaterialPageRoute(
+            builder: (_) =>
+                ACLocationDetail(rentalLocationId: rentalLocationId));
       case acBookingAppointment:
         return MaterialPageRoute(builder: (_) => DateTimePickerScreen());
       case accountSetting:
@@ -84,8 +86,15 @@ class AppRoutes {
                   pageIndex: previousPage,
                 ));
       case qrPayment:
-        final String qrCode = settings.arguments as String? ?? "";
-        return MaterialPageRoute(builder: (_) => QRCodeScreen(qrCodeData: qrCode,));
+        final Map<String, dynamic> args =
+            settings.arguments as Map<String, dynamic>;
+        final String qrCode = args['qrCode'] ?? "";
+        final String subscriptionId = args['subscriptionId'] ?? "";
+        return MaterialPageRoute(
+            builder: (_) => QRCodeScreen(
+                  qrCodeData: qrCode,
+                  subscriptionId: subscriptionId,
+                ));
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
