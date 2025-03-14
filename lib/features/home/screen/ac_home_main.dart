@@ -195,18 +195,18 @@ class _ACHomeMainState extends State<ACHomeMain> {
                             ),
                           ),
                           onTap: () {
-                            debugPrint("Role: ${account!.role}");
-                            if (account.role ==
-                                UserRoleEnum.AdvertisingClient.name) {
-                              Navigator.pushNamed(
-                                  context, AppRoutes.uploadContent);
+                            if (account != null) {
+                              if (account.role ==
+                                  UserRoleEnum.AdvertisingClient.name) {
+                                Navigator.pushNamed(
+                                    context, AppRoutes.uploadContent);
+                              }
+                              if (account.role ==
+                                  UserRoleEnum.SpaceProvider.name) {
+                                Navigator.pushNamed(
+                                    context, AppRoutes.uploadSpace);
+                              }
                             }
-                            if (account.role ==
-                                UserRoleEnum.SpaceProvider.name) {
-                              Navigator.pushNamed(
-                                  context, AppRoutes.uploadSpace);
-                            }
-
                           },
                         ),
                       ],
@@ -237,7 +237,7 @@ class _ACHomeMainState extends State<ACHomeMain> {
                         price: '${e.price ?? 0}',
                         minDuration: '${1}',
                         traffic: e.description ?? "No description",
-                        type: 'Outdoor billboard',
+                        type: e.panelSize??"Unavailable",
                       );
                     }).toList(),
                   )

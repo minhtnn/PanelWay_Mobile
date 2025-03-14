@@ -16,7 +16,6 @@ class RentalLocationRepository {
       var response =
           await _apiService.get(ApiEndpoints.rentalLocationApiEndpoint);
 
-      
       var rentalLocationPaging = PaginatedResponse<RentalLocation>.fromJson(
           jsonDecode(response.toString()),
           (item) => RentalLocation.fromJson(item));
@@ -26,8 +25,30 @@ class RentalLocationRepository {
     }
   }
 
-  Future<RentalLocation> getRentalLocationById(
-      String id) async {
+  Future<List<RentalLocation>?> getRentalLocationsMapPaging(
+      double minLat, double maxLat, double minLong, double maxLong) async {
+    try {
+      var responseList = await _apiService.get(
+          "${ApiEndpoints.findRentalLocationByLadLongApiEndpoint}?minLat=${minLat}&minLng=${minLong}&maxLat=${maxLat}&maxLng=${maxLong}");
+
+      if (responseList?.data != null && responseList!.data is List) {
+        List<dynamic> responses = responseList.data;
+
+        List<RentalLocation> subscriptionList = responses
+            .map(
+                (item) => RentalLocation.fromJson(item as Map<String, dynamic>))
+            .toList();
+
+        return subscriptionList;
+      } else {
+        return [];
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<RentalLocation> getRentalLocationById(String id) async {
     try {
       var response = await _apiService
           .get("${ApiEndpoints.rentalLocationApiEndpoint}/${id}");

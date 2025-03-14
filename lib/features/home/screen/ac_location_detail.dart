@@ -330,8 +330,8 @@ class _ACLocationDetailState extends State<ACLocationDetail> {
                 height: 200,
                 child: Center(
                     child: BuildMap(
-                  latitude: double.tryParse(rentalLocation!.locationX??"10") ?? null,
-                  longitude: double.tryParse(rentalLocation!.locationY??"10") ?? null,
+                  latitude: double.tryParse((rentalLocation!.latitude??"10").toString()) ?? null,
+                  longitude: double.tryParse((rentalLocation!.longitude??"10").toString()) ?? null,
                 )),
                 decoration: BoxDecoration(
                     color: Colors.grey[300],

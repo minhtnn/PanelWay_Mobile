@@ -20,6 +20,7 @@ class RentalLocationViewmodel extends ChangeNotifier {
   int _page = 1;
   int _size = 10;
   PaginatedResponse<RentalLocation>? _rentalLocationPaging;
+  List<RentalLocation>? _rentalLocationMapPaging;
 
   bool get isLoading => _isLoading;
   String? get error => _error;
@@ -27,20 +28,22 @@ class RentalLocationViewmodel extends ChangeNotifier {
   int get size => _size;
   PaginatedResponse<RentalLocation>? get rentalLocationPaging =>
       _rentalLocationPaging;
+  List<RentalLocation>? get rentalLocationMapPaging =>
+      _rentalLocationMapPaging;
 
   // Key fix: Cache the loaded images to prevent them from being lost
   final Map<String, List<RentalLocationImage>> _imageCache = {};
 
   Future<PaginatedResponse<RentalLocation>?> getRentalLocationPaging() async {
     if (_isLoading) return _rentalLocationPaging;
-    
+
     // If we already have data loaded with images, just return it
-    if (_rentalLocationPaging != null && 
-        _rentalLocationPaging!.items.isNotEmpty && 
+    if (_rentalLocationPaging != null &&
+        _rentalLocationPaging!.items.isNotEmpty &&
         _hasAllImagesLoaded()) {
       return _rentalLocationPaging;
     }
-    
+
     _isLoading = true;
     notifyListeners();
     _error = null;
@@ -49,12 +52,13 @@ class RentalLocationViewmodel extends ChangeNotifier {
       var rentalLocationPagingIn =
           await _rentalLocationRepository.getRentalLocationsPaging(page, size);
       _rentalLocationPaging = rentalLocationPagingIn;
-      
-      if (_rentalLocationPaging != null && _rentalLocationPaging!.items.isNotEmpty) {
+
+      if (_rentalLocationPaging != null &&
+          _rentalLocationPaging!.items.isNotEmpty) {
         // Load images for each rental location
         await _loadImagesForLocations();
       }
-      
+
       _isLoading = false;
       notifyListeners();
       return _rentalLocationPaging;
@@ -70,34 +74,101 @@ class RentalLocationViewmodel extends ChangeNotifier {
       throw Exception(e.toString());
     }
   }
-  
+
+  Future<List<RentalLocation>?> getRentalLocationMapPaging([
+    double? minLat,
+    double? maxLat,
+    double? minLong,
+    double? maxLong,
+  ]) async {
+    // Use default values if parameters are not provided (for backward compatibility)
+    minLat ??= 10.755125758798037;
+    maxLat ??= 10.883146727118318;
+    minLong ??= 106.61538557572803;
+    maxLong ??= 106.68280168013138;
+
+    if (_isLoading) return _rentalLocationMapPaging;
+
+    _isLoading = true;
+    notifyListeners();
+    _error = null;
+
+    try {
+      var rentalLocationPagingMapIn = await _rentalLocationRepository
+          .getRentalLocationsMapPaging(minLat, maxLat, minLong, maxLong);
+      _rentalLocationMapPaging = rentalLocationPagingMapIn;
+
+      if (_rentalLocationMapPaging != null &&
+          _rentalLocationMapPaging!.isNotEmpty) {
+        // Load images for each rental location
+        await _loadImagesForLocationsInMap();
+      }
+
+      _isLoading = false;
+      notifyListeners();
+      return _rentalLocationMapPaging;
+    } on ApiException catch (e) {
+      _error = e.message;
+      _isLoading = false;
+      notifyListeners();
+      return null;
+    } catch (e) {
+      _error = 'Unexpected error occurred: ${e.toString()}';
+      _isLoading = false;
+      notifyListeners();
+      throw Exception(e.toString());
+    }
+  }
+
   // Check if all locations have their images loaded
   bool _hasAllImagesLoaded() {
     if (_rentalLocationPaging == null || _rentalLocationPaging!.items.isEmpty) {
       return false;
     }
-    
+
     for (var location in _rentalLocationPaging!.items) {
       if (location.id == null) continue;
-      
-      if (location.rentalLocationImages == null || 
+
+      if (location.rentalLocationImages == null ||
           location.rentalLocationImages!.isEmpty) {
         // Check if we have the images in cache
-        if (!_imageCache.containsKey(location.id!) || 
+        if (!_imageCache.containsKey(location.id!) ||
             _imageCache[location.id]!.isEmpty) {
           return false;
         }
       }
     }
-    
+
     return true;
   }
-  
+
+  bool _hasAllImagesMapLoaded() {
+    if (_rentalLocationMapPaging == null ||
+        _rentalLocationMapPaging!.isEmpty) {
+      return false;
+    }
+
+    for (var location in _rentalLocationMapPaging!) {
+      if (location.id == null) continue;
+
+      if (location.rentalLocationImages == null ||
+          location.rentalLocationImages!.isEmpty) {
+        // Check if we have the images in cache
+        if (!_imageCache.containsKey(location.id!) ||
+            _imageCache[location.id]!.isEmpty) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
   // Load images for all locations
   Future<void> _loadImagesForLocations() async {
     for (var location in _rentalLocationPaging!.items) {
       if (location.id == null) continue;
-      
+
       // Check if we have images in cache first
       if (_imageCache.containsKey(location.id!)) {
         location.rentalLocationImages = _imageCache[location.id!];
@@ -106,14 +177,42 @@ class RentalLocationViewmodel extends ChangeNotifier {
         try {
           var images = await _rentalLocationImageRepository
               .getRentalLocationImagesById(location.id!);
-          
+
           if (images != null && images.isNotEmpty) {
             location.rentalLocationImages = images;
             // Cache the images for future use
             _imageCache[location.id!] = images;
           }
         } catch (e) {
-          debugPrint("Error loading images for location ${location.id}: ${e.toString()}");
+          debugPrint(
+              "Error loading images for location ${location.id}: ${e.toString()}");
+        }
+      }
+    }
+  }
+
+  // Load images for all locations in mao
+  Future<void> _loadImagesForLocationsInMap() async {
+    for (var location in _rentalLocationMapPaging!) {
+      if (location.id == null) continue;
+
+      // Check if we have images in cache first
+      if (_imageCache.containsKey(location.id!)) {
+        location.rentalLocationImages = _imageCache[location.id!];
+      } else {
+        // Load images from repository
+        try {
+          var images = await _rentalLocationImageRepository
+              .getRentalLocationImagesById(location.id!);
+
+          if (images != null && images.isNotEmpty) {
+            location.rentalLocationImages = images;
+            // Cache the images for future use
+            _imageCache[location.id!] = images;
+          }
+        } catch (e) {
+          debugPrint(
+              "Error loading images for location ${location.id}: ${e.toString()}");
         }
       }
     }
@@ -127,14 +226,15 @@ class RentalLocationViewmodel extends ChangeNotifier {
     try {
       var rentalLocationIn =
           await _rentalLocationRepository.getRentalLocationById(id);
-      
+
       if (rentalLocationIn != null) {
         // Check if we have images in cache first
         if (_imageCache.containsKey(id)) {
           rentalLocationIn.rentalLocationImages = _imageCache[id];
         } else {
           // Get the images for this specific rental location
-          var images = await _rentalLocationImageRepository.getRentalLocationImagesById(id);
+          var images = await _rentalLocationImageRepository
+              .getRentalLocationImagesById(id);
           if (images != null && images.isNotEmpty) {
             rentalLocationIn.rentalLocationImages = images;
             // Cache the images
@@ -142,7 +242,7 @@ class RentalLocationViewmodel extends ChangeNotifier {
           }
         }
       }
-      
+
       _isLoading = false;
       notifyListeners();
       return rentalLocationIn;

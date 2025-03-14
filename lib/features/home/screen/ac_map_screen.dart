@@ -1,184 +1,43 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:panelway_mobile/app/app_palette.dart';
 import 'package:panelway_mobile/app/app_routes.dart';
-import 'package:panelway_mobile/core/constants/app_constants.dart';
 import 'package:panelway_mobile/core/enum/bottom_bar_page.dart';
+import 'package:panelway_mobile/core/widgets/flutter_map/custom_marker.dart';
+import 'package:panelway_mobile/core/widgets/flutter_map/location_info.dart';
+import 'package:panelway_mobile/core/widgets/flutter_map/map_style.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:panelway_mobile/core/widgets/non_rotating_marker.dart';
-
-// Add MapStyle enum
-enum MapStyle { standard, dark, light, satellite }
-
-class MapStyleData {
-  final String name;
-  final String urlTemplate;
-  final Icon icon;
-
-  MapStyleData({
-    required this.name,
-    required this.urlTemplate,
-    required this.icon,
-  });
-}
-
-class LocationInfo {
-  final String name;
-  final String description;
-  final LatLng location;
-  final Color markerColor;
-
-  LocationInfo({
-    required this.name,
-    required this.description,
-    required this.location,
-    required this.markerColor,
-  });
-}
-
-class CustomMarkerWidget extends StatefulWidget {
-  final String label;
-  final Color color;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const CustomMarkerWidget({
-    required this.label,
-    required this.color,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  _CustomMarkerWidgetState createState() => _CustomMarkerWidgetState();
-}
-
-class _CustomMarkerWidgetState extends State<CustomMarkerWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (!widget.isSelected)
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 4,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Text(
-              widget.label,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-          ),
-        if (!widget.isSelected) SizedBox(height: 4),
-        GestureDetector(
-          onTap: widget.onTap,
-          child: Container(
-            width: 30,
-            height: 30,
-            decoration: BoxDecoration(
-              color: widget.color,
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white, width: 2),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 4,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Icon(
-              Icons.location_on,
-              color: Colors.white,
-              size: 20,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-
+import 'package:panelway_mobile/features/auth/view_models/auth_viewmodel.dart';
+import 'package:panelway_mobile/features/home/view_models/rental_location_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class MapScreen extends StatefulWidget {
   @override
   _MapScreenState createState() => _MapScreenState();
 }
 
-class _MapScreenState extends State<MapScreen> {
+class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   LocationInfo? selectedLocation;
   MapStyle currentMapStyle = MapStyle.standard;
   bool isStyleMenuOpen = false;
   bool _isLoadingLocation = false;
   LatLng? _currentUserLocation;
   final MapController _mapController = MapController();
-
+  bool _initialLoadDone = false;
+  double? _prevMinLat;
+  double? _prevMaxLat;
+  double? _prevMinLong;
+  double? _prevMaxLong;
+  Timer? _debounceTimer;
+  late AnimationController _markersAnimationController;
+  late Animation<double> _markersOpacity;
+  bool _locationsLoaded = false;
   // Map style definitions
-  final Map<MapStyle, MapStyleData> mapStyles = {
-    MapStyle.standard: MapStyleData(
-      name: 'Standard',
-      urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-      icon: Icon(Icons.map, color: Colors.blue),
-    ),
-    MapStyle.dark: MapStyleData(
-      name: 'Dark',
-      urlTemplate:
-          "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}.png?api_key=${AppConstrant.flutterMapApiKey}",
-      icon: Icon(Icons.nights_stay, color: Colors.grey[800]),
-    ),
-    MapStyle.light: MapStyleData(
-      name: 'Light',
-      urlTemplate:
-          'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}.png?api_key=${AppConstrant.flutterMapApiKey}',
-      icon: Icon(Icons.light_mode, color: Colors.orange),
-    ),
-    MapStyle.satellite: MapStyleData(
-      name: 'Satellite',
-      urlTemplate:
-          'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}?api_key=${AppConstrant.flutterMapApiKey}',
-      icon: Icon(Icons.satellite, color: Colors.green),
-    ),
-  };
-
-  final List<LocationInfo> locations = [
-    LocationInfo(
-      name: 'TP.HCM',
-      description:
-          'The largest city in Vietnam, known for its vibrant culture and history.',
-      location: LatLng(10.8231, 106.6297),
-      markerColor: Colors.red,
-    ),
-    LocationInfo(
-      name: 'Independence Palace',
-      description:
-          'Historic landmark that served as South Vietnam\'s presidential palace.',
-      location: LatLng(10.762622, 106.660172),
-      markerColor: Colors.blue,
-    ),
-    LocationInfo(
-      name: 'Notre-Dame Cathedral',
-      description:
-          'Iconic French colonial era cathedral in the heart of Ho Chi Minh City.',
-      location: LatLng(10.77689, 106.700806),
-      markerColor: Colors.green,
-    ),
-  ];
 
   Future<void> _getCurrentLocation() async {
     setState(() {
@@ -193,7 +52,7 @@ class _MapScreenState extends State<MapScreen> {
           const SnackBar(
             content:
                 Text('Location services are disabled. Please enable them.'),
-            backgroundColor: Colors.red,
+            backgroundColor: Palette.red,
           ),
         );
         return;
@@ -208,7 +67,7 @@ class _MapScreenState extends State<MapScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Location permissions are denied'),
-              backgroundColor: Colors.red,
+              backgroundColor: Palette.red,
             ),
           );
           return;
@@ -220,11 +79,11 @@ class _MapScreenState extends State<MapScreen> {
           SnackBar(
             content: const Text(
                 'Location permissions are permanently denied. Please enable them in settings.'),
-            backgroundColor: Colors.red,
+            backgroundColor: Palette.red,
             action: SnackBarAction(
               label: 'Settings',
               onPressed: () => Geolocator.openAppSettings(),
-              textColor: Colors.white,
+              textColor: Palette.white,
             ),
           ),
         );
@@ -248,7 +107,7 @@ class _MapScreenState extends State<MapScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error getting location: $e'),
-          backgroundColor: Colors.red,
+          backgroundColor: Palette.red,
         ),
       );
     } finally {
@@ -258,7 +117,7 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
-  List<Marker> get markers {
+  List<Marker> markers(List<LocationInfo> locations) {
     List<Marker> allMarkers = locations
         .map(
           (loc) => NonRotatingMarker(
@@ -266,7 +125,7 @@ class _MapScreenState extends State<MapScreen> {
             width: 120,
             height: 80,
             child: CustomMarkerWidget(
-              label: loc.name,
+              label: loc.price,
               color: loc.markerColor,
               isSelected: selectedLocation == loc,
               onTap: () {
@@ -288,17 +147,17 @@ class _MapScreenState extends State<MapScreen> {
           height: 60,
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.blue.withOpacity(0.3),
+              color: Palette.blueButton.withOpacity(0.3),
               shape: BoxShape.circle,
               border: Border.all(
-                color: Colors.blue,
+                color: Palette.blueButton,
                 width: 2,
               ),
             ),
             child: const Center(
               child: Icon(
-                Icons.my_location,
-                color: Colors.blue,
+                Symbols.my_location,
+                color: Palette.blueButton,
                 size: 30,
               ),
             ),
@@ -311,21 +170,179 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    // Initialize animation controller
+    _markersAnimationController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 800),
+    );
+
+    _markersOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _markersAnimationController,
+        curve: Curves.easeIn,
+      ),
+    );
+    // Only load data once when widget is created
+    _loadDataOnce();
+  }
+
+  void _loadDataOnce() {
+    if (!_initialLoadDone) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // Get the initial bounds from the map controller
+        double minLat = 10.755125758798037;
+        double maxLat = 10.883146727118318;
+        double minLong = 106.61538557572803;
+        double maxLong = 106.68280168013138;
+
+        final rentalLocVM =
+            Provider.of<RentalLocationViewmodel>(context, listen: false);
+        rentalLocVM
+            .getRentalLocationMapPaging(minLat, maxLat, minLong, maxLong)
+            .then((_) {
+          // Start animation when locations are loaded
+          if (rentalLocVM.rentalLocationMapPaging != null &&
+              rentalLocVM.rentalLocationMapPaging!.isNotEmpty) {
+            setState(() {
+              _locationsLoaded = true;
+            });
+            _markersAnimationController.forward();
+          }
+        });
+
+        // Call with the correct parameters from the bounds
+        Provider.of<RentalLocationViewmodel>(context, listen: false)
+            .getRentalLocationMapPaging(minLat, maxLat, minLong, maxLong);
+
+        Provider.of<AuthViewModel>(context, listen: false).getAccount();
+        final authVM = Provider.of<AuthViewModel>(context, listen: false);
+        authVM.getAccount().then((_) {
+          if (mounted) {
+            setState(() {}); // Force refresh if needed
+          }
+        });
+        _initialLoadDone = true;
+      });
+    }
+  }
+
+  void _loadLocationData(
+      double minLat, double maxLat, double minLong, double maxLong) {
+    if (!mounted) return; // Check if widget is still mounted
+
+    final rentalLocVM =
+        Provider.of<RentalLocationViewmodel>(context, listen: false);
+
+    // Reset animation controller
+    _markersAnimationController.reset();
+    setState(() {
+      _locationsLoaded = false;
+    });
+
+    // Get rental location data
+    rentalLocVM
+        .getRentalLocationMapPaging(minLat, maxLat, minLong, maxLong)
+        .then((_) {
+      if (!mounted) return; // Add this check before setState
+      // Start animation when locations are loaded
+      if (rentalLocVM.rentalLocationMapPaging != null &&
+          rentalLocVM.rentalLocationMapPaging!.isNotEmpty) {
+        setState(() {
+          _locationsLoaded = true;
+        });
+        _markersAnimationController.forward();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    _markersAnimationController
+        .dispose(); // Missing disposal of the animation controller
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    List<LocationInfo> locations = [];
+    final rentalLocationViewmodel =
+        Provider.of<RentalLocationViewmodel>(context);
+    if (rentalLocationViewmodel.rentalLocationMapPaging != null &&
+        rentalLocationViewmodel.rentalLocationMapPaging!.isNotEmpty) {
+      var rentalLocationList = rentalLocationViewmodel.rentalLocationMapPaging;
+      locations = rentalLocationList!.map((e) {
+        return LocationInfo(
+          id: e.id ?? "",
+          address: e.address ?? "Unavailable",
+          price: '${e.price} VND',
+          duration: '${e.price} years min',
+          traffic: '${e.price} views/day',
+          type: e.panelSize ?? "Unavailable",
+          imageUrl: e.rentalLocationImages != null &&
+                  e.rentalLocationImages!.isNotEmpty &&
+                  e.rentalLocationImages![0].imageUrl != null
+              ? e.rentalLocationImages![0].imageUrl!
+              : "lib\\assets\\Image-not-found.png",
+          location: LatLng(e.latitude ?? 0, e.longitude ?? 0),
+          markerColor: Palette.blueButton,
+        );
+      }).toList();
+      if (locations.isNotEmpty && !_locationsLoaded) {
+        setState(() {
+          _locationsLoaded = true;
+        });
+        _markersAnimationController.forward();
+      }
+    }
+
     return Scaffold(
       body: Stack(
         children: [
           FlutterMap(
             mapController: _mapController,
             options: MapOptions(
-              initialCenter: locations[0].location,
+              initialCenter: locations.isNotEmpty
+                  ? locations[0].location
+                  : const LatLng(10.8231, 106.6297),
               initialZoom: 13.0,
               onMapEvent: (MapEvent mapEvent) {
-                if (mapEvent is MapEventMove) {
-                  print('Center: ${mapEvent.camera.center}');
-                  print('Zoom: ${mapEvent.camera.zoom}');
+                if (mapEvent is MapEventMoveEnd) {
                   final bounds = mapEvent.camera.visibleBounds;
-                  print('Bounds: ${bounds.toString()}');
+
+                  // Extract the bounds components
+                  double minLat = bounds.south;
+                  double maxLat = bounds.north;
+                  double minLong = bounds.west;
+                  double maxLong = bounds.east;
+
+                  // Check if bounds have changed
+                  bool boundsChanged = _prevMinLat != minLat ||
+                      _prevMaxLat != maxLat ||
+                      _prevMinLong != minLong ||
+                      _prevMaxLong != maxLong;
+
+                  if (boundsChanged) {
+                    // Update the previous bounds
+                    _prevMinLat = minLat;
+                    _prevMaxLat = maxLat;
+                    _prevMinLong = minLong;
+                    _prevMaxLong = maxLong;
+
+                    // Debounce the API call
+                    // Debounce the API call
+                    if (_debounceTimer?.isActive ?? false) {
+                      _debounceTimer!.cancel();
+                    }
+                    _debounceTimer = Timer(Duration(seconds: 1), () {
+                      if (mounted) {
+                        // Check if widget is still mounted before calling the method
+                        _loadLocationData(minLat, maxLat, minLong, maxLong);
+                      }
+                    });
+                  }
                 }
               },
             ),
@@ -335,7 +352,7 @@ class _MapScreenState extends State<MapScreen> {
                 userAgentPackageName: 'com.example.app',
               ),
               MarkerLayer(
-                markers: markers,
+                markers: markers(locations),
               ),
             ],
           ),
@@ -346,16 +363,17 @@ class _MapScreenState extends State<MapScreen> {
               children: [
                 GestureDetector(
                   onTap: () {
-                      Navigator.popAndPushNamed(context, AppRoutes.bottombar, arguments: BottomBarPage.home.index);
+                    Navigator.popAndPushNamed(context, AppRoutes.bottombar,
+                        arguments: BottomBarPage.home.index);
                   },
                   child: Container(
                     padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(100000),
-                      color: Colors.white,
+                      color: Palette.white,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
+                          color: Palette.darkText.withOpacity(0.2),
                           offset: Offset(0, 4),
                           blurRadius: 6,
                         ),
@@ -374,7 +392,7 @@ class _MapScreenState extends State<MapScreen> {
                     color: Palette.white,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
+                        color: Palette.darkText.withOpacity(0.2),
                         offset: Offset(0, 4),
                         blurRadius: 6,
                       ),
@@ -386,7 +404,7 @@ class _MapScreenState extends State<MapScreen> {
                     decoration: InputDecoration(
                       hintText: 'Tìm kiếm...',
                       border: InputBorder.none,
-                      prefixIcon: Icon(Icons.search, color: Colors.grey),
+                      prefixIcon: Icon(Icons.search, color: Palette.grey),
                       suffixIcon: Icon(Symbols.location_pin),
                     ),
                   ),
@@ -406,11 +424,11 @@ class _MapScreenState extends State<MapScreen> {
                 if (isStyleMenuOpen) ...[
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Palette.white,
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Palette.darkText.withOpacity(0.1),
                           blurRadius: 8,
                           offset: Offset(0, 4),
                         ),
@@ -442,7 +460,7 @@ class _MapScreenState extends State<MapScreen> {
                           .toList(),
                     ),
                   ),
-                  SizedBox(height: 8),
+                  SizedBox(height: 12),
                 ],
                 Container(
                   padding: EdgeInsets.only(top: 10, bottom: 10),
@@ -452,9 +470,9 @@ class _MapScreenState extends State<MapScreen> {
                         isStyleMenuOpen = !isStyleMenuOpen;
                       });
                     },
-                    child: Icon(Icons.layers),
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.blue,
+                    child: Icon(Symbols.layers),
+                    backgroundColor: Palette.white,
+                    foregroundColor: Palette.blueButton,
                     heroTag: 'layerFAB',
                   ),
                 ),
@@ -464,12 +482,12 @@ class _MapScreenState extends State<MapScreen> {
                     onPressed: _isLoadingLocation ? null : _getCurrentLocation,
                     child: _isLoadingLocation
                         ? const CircularProgressIndicator(
-                            color: Colors.blue,
+                            color: Palette.blueButton,
                             strokeWidth: 2,
                           )
-                        : const Icon(Icons.my_location),
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.blue,
+                        : const Icon(Symbols.my_location),
+                    backgroundColor: Palette.white,
+                    foregroundColor: Palette.blueButton,
                     heroTag: 'locationFAB', // Unique tag for this button
                   ),
                 ),
@@ -479,22 +497,22 @@ class _MapScreenState extends State<MapScreen> {
 
           // Location Info Popup
           AnimatedPositioned(
-            duration: Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            left: 0,
-            right: 0,
-            bottom: selectedLocation != null ? 0 : -200,
+            duration: Duration(milliseconds: 500),
+            curve: Curves.bounceIn,
+            left: 10,
+            right: 10,
+            bottom: 10,
             child: AnimatedOpacity(
-              duration: Duration(milliseconds: 300),
+              duration: Duration(milliseconds: 500),
               opacity: selectedLocation != null ? 1.0 : 0.0,
               child: Container(
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                  color: Palette.white,
+                  borderRadius: BorderRadius.all(Radius.circular(16)),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Palette.darkText.withOpacity(0.1),
                       blurRadius: 10,
                       offset: Offset(0, -5),
                     ),
@@ -508,15 +526,18 @@ class _MapScreenState extends State<MapScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                selectedLocation!.name,
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
+                              Expanded(
+                                child: Text(
+                                  selectedLocation!.address,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
                               IconButton(
                                 icon: Icon(Icons.close),
+                                alignment: Alignment.topRight,
                                 onPressed: () {
                                   setState(() {
                                     selectedLocation = null;
@@ -525,12 +546,142 @@ class _MapScreenState extends State<MapScreen> {
                               ),
                             ],
                           ),
-                          SizedBox(height: 8),
-                          Text(
-                            selectedLocation!.description,
-                            style: TextStyle(fontSize: 16),
+                          const SizedBox(
+                            height: 12,
                           ),
-                          SizedBox(height: 16),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Location info
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Location with icon
+                                    Row(
+                                      children: [
+                                        Icon(Icons.location_on,
+                                            color: Colors.blue, size: 16),
+                                        SizedBox(width: 4),
+                                        Expanded(
+                                          child: Text(
+                                            selectedLocation!.address,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 8),
+
+                                    // Price
+                                    Text(
+                                      'From ${selectedLocation!.price}/month',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: Palette.blueButton,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+
+                                    // Details
+                                    Text(
+                                      selectedLocation!.duration,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                    Text(
+                                      'Traffic: ${selectedLocation!.traffic}',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                    Text(
+                                      'Type: ${selectedLocation!.type}',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              // Billboard image
+                              Container(
+                                margin: EdgeInsets.only(left: 8),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(6),
+                                  child: (selectedLocation!.imageUrl
+                                              .startsWith('http') ||
+                                          selectedLocation!.imageUrl
+                                              .startsWith('https'))
+                                      ? Image.network(
+                                          selectedLocation!.imageUrl,
+                                          height: 90,
+                                          width: 120,
+                                          fit: BoxFit.cover,
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
+                                            return Image.asset(
+                                              'lib\\assets\\Image-not-found.png',
+                                              height: 90,
+                                              width: 120,
+                                              fit: BoxFit.cover,
+                                            );
+                                          },
+                                        )
+                                      : Image.asset(
+                                          selectedLocation!.imageUrl,
+                                          height: 90,
+                                          width: 120,
+                                          fit: BoxFit.cover,
+                                        ),
+                                ),
+                              ),
+
+                              // Close button
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          // View detail button
+                          Center(
+                            child: TextButton(
+                              onPressed: () {
+                                if(selectedLocation != null){
+                                  Navigator.pushReplacementNamed(
+                                    context, AppRoutes.acLocationDetail,
+                                    arguments: selectedLocation!.id);
+                                }
+                              },
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'View detail',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.keyboard_arrow_down,
+                                    size: 16,
+                                    color: Colors.grey[700],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                         ],
                       )
                     : SizedBox(),

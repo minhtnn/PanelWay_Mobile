@@ -1,11 +1,10 @@
 import 'package:panelway_mobile/data/models/rental_location_image.dart';
-import 'package:uuid/uuid.dart';
 
 class RentalLocation {
   String? id;
   String? code;
-  String? locationX;
-  String? locationY;
+  double? latitude;
+  double? longitude;
   String? address;
   String? panelSize;
   String? description;
@@ -20,8 +19,8 @@ class RentalLocation {
   RentalLocation({
     this.id,
     this.code,
-    this.locationX,
-    this.locationY,
+    this.latitude,
+    this.longitude,
     this.address,
     this.panelSize,
     this.description,
@@ -38,8 +37,8 @@ class RentalLocation {
     return RentalLocation(
       id: json['id']?.toString(),
       code: json['code'],
-      locationX: json['locationX'],
-      locationY: json['locationY'],
+      latitude: json['latitude'],
+      longitude: json['longitude'],
       address: json['address'],
       panelSize: json['panelSize'],
       description: json['description'],
@@ -56,8 +55,8 @@ class RentalLocation {
     return {
       "id": id,
       "code": code,
-      "locationX": locationX,
-      "locationY": locationY,
+      "latitude": latitude,
+      "longitude": longitude,
       "address": address,
       "panelSize": panelSize,
       "description": description,
