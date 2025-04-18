@@ -3,12 +3,14 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:panelway_mobile/app/app_palette.dart';
 import 'package:panelway_mobile/app/app_routes.dart';
 import 'package:panelway_mobile/core/widgets/bottom_bar.dart';
+import 'package:panelway_mobile/data/repositories/accountRepository.dart';
 import 'package:panelway_mobile/data/repositories/payosRepository.dart';
 import 'package:panelway_mobile/data/repositories/rentalLocationImageRepository.dart';
 import 'package:panelway_mobile/data/repositories/rentalLocationRepository.dart';
 import 'package:panelway_mobile/data/repositories/subcriptionRepository.dart';
 import 'package:panelway_mobile/data/services/api_service.dart';
 import 'package:panelway_mobile/features/auth/screen/login_screen.dart';
+import 'package:panelway_mobile/features/home/view_models/account_viewmodel.dart';
 import 'package:panelway_mobile/features/home/view_models/rental_location_viewmodel.dart';
 import 'package:panelway_mobile/features/home/view_models/retal_location_detail_viewmodel.dart';
 import 'package:panelway_mobile/features/package_plan/view_model/subcription_view_model.dart';
@@ -52,6 +54,10 @@ void main() {
               subcriptionrepository: Subcriptionrepository(apiService),
               payosRepository: Payosrepository(apiService)),
         ),
+        ChangeNotifierProvider(
+          create: (context) => AccountViewmodel(
+              accountRepository: AccountRepository(apiService)),
+        ),
       ],
       child: MyApp(),
     ),
@@ -81,7 +87,6 @@ class MyApp extends StatelessWidget {
           bottomAppBarTheme: BottomAppBarTheme(
               color: Colors.white, shadowColor: Palette.shadowForButton)),
       home: AuthWrapper(),
-
       onGenerateRoute: AppRoutes.generateRoute,
     );
   }

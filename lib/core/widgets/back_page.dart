@@ -44,14 +44,16 @@ class BackButtonCustomPosition extends StatelessWidget {
 
 class BackButtonCustom extends StatelessWidget {
   final int? previousPage;
+  String? id;
   final BuildContext context;
   final String backToRoute;
   final String? title;
   final double? buttonTitleDistance;
-  const BackButtonCustom(
+  BackButtonCustom(
       {super.key,
       this.previousPage,
       this.buttonTitleDistance,
+      this.id,
       required this.context,
       required this.backToRoute,
       this.title});
@@ -71,7 +73,7 @@ class BackButtonCustom extends StatelessWidget {
             icon: const Icon(Icons.arrow_back, color: Colors.black),
             onPressed: () {
               Navigator.popAndPushNamed(
-                  context, backToRoute, arguments: previousPage); // Quay lại trang trước đó
+                  context, backToRoute, arguments: (previousPage != null)? previousPage : id); // Quay lại trang trước đó
             },
           ),
         ),

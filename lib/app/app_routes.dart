@@ -68,7 +68,8 @@ class AppRoutes {
             builder: (_) =>
                 ACLocationDetail(rentalLocationId: rentalLocationId));
       case acBookingAppointment:
-        return MaterialPageRoute(builder: (_) => DateTimePickerScreen());
+      final String? rentalLocationId = settings.arguments as String?;
+        return MaterialPageRoute(builder: (_) => DateTimePickerScreen(rentalLocationId: rentalLocationId??"",));
       case accountSetting:
         return MaterialPageRoute(builder: (_) => AccountSetting());
       case accountInformation:

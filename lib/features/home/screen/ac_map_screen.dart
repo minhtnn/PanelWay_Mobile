@@ -623,7 +623,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                                           selectedLocation!.imageUrl
                                               .startsWith('https'))
                                       ? Image.network(
-                                          selectedLocation!.imageUrl,
+                                          convertToDirectImageUrl(selectedLocation!.imageUrl),
                                           height: 90,
                                           width: 120,
                                           fit: BoxFit.cover,
@@ -692,4 +692,20 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       ),
     );
   }
+  String convertToDirectImageUrl(String imageUrl) {
+  // Handle Google Drive URLs
+  if (imageUrl.contains('drive.google.com/file/d/')) {
+    // Extract the file ID from Google Drive URL
+    final RegExp regExp = RegExp(r'\/d\/(.+?)\/');
+    final match = regExp.firstMatch(imageUrl);
+    if (match != null && match.groupCount >= 1) {
+      final fileId = match.group(1);
+      // Convert to direct download link
+      return 'https://drive.google.com/uc?export=view&id=$fileId';
+    }
+  }
+  
+  // Return original URL for non-Google Drive URLs
+  return imageUrl;
+}
 }

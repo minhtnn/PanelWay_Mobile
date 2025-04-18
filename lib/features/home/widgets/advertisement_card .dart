@@ -30,19 +30,20 @@ class AdvertisementCard extends StatelessWidget {
 
   // Check if URL is reachable
   Future<bool> _isImageUrlValid() async {
-    if (imageUrl == null || imageUrl!.isEmpty) return false;
+  final String directUrl = _getDirectImageUrl(imageUrl);
+  if (directUrl.isEmpty) return false;
 
-    try {
-      // Try a HEAD request to check if resource exists
-      final response = await http
-          .head(Uri.parse(imageUrl!))
-          .timeout(const Duration(seconds: 5));
-      return response.statusCode >= 200 && response.statusCode < 300;
-    } catch (e) {
-      debugPrint("Image URL validation error: $e");
-      return false;
-    }
+  try {
+    // Try a HEAD request to check if resource exists
+    final response = await http
+        .head(Uri.parse(directUrl))
+        .timeout(const Duration(seconds: 5));
+    return response.statusCode >= 200 && response.statusCode < 300;
+  } catch (e) {
+    debugPrint("Image URL validation error: $e");
+    return false;
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +78,7 @@ class AdvertisementCard extends StatelessWidget {
                     // If URL is valid, try to load the image
                     if (snapshot.hasData && snapshot.data == true) {
                       return Image.network(
-                        imageUrl!,
+                        _getDirectImageUrl(imageUrl!),
                         width: double.infinity,
                         height: 500,
                         fit: BoxFit.cover,
@@ -227,26 +228,47 @@ class AdvertisementCard extends StatelessWidget {
       height: 500,
       color: Palette.inputBackground,
       child: Image.asset("lib\\assets\\Image-not-found.png"),
-      // Column(
-      //   mainAxisAlignment: MainAxisAlignment.center,
-      //   children: [
-      //     Icon(
-      //       Symbols.broken_image_rounded,
-      //       fill: 1,
-      //       color: Palette.dismissibleBackground,
-      //       size: 80,
-      //     ),
-      //     SizedBox(height: 12),
-      //     Text(
-      //       "Image not available",
-      //       style: TextStyle(
-      //         color: Palette.grey,
-      //         fontSize: 16,
-      //         fontWeight: FontWeight.w500,
-      //       ),
-      //     ),
-      //   ],
-      // ),
     );
   }
+
+  // Add this method to your class to convert Drive links to direct download URLs
+  String _getDirectImageUrl(String? url) {
+    if (url == null || url.isEmpty) return '';
+
+    // Case 1: Regular direct image URLs (like your example)
+    if (url.toLowerCase().endsWith('.jpg') ||
+        url.toLowerCase().endsWith('.jpeg') ||
+        url.toLowerCase().endsWith('.png') ||
+        url.toLowerCase().endsWith('.gif') ||
+        url.toLowerCase().endsWith('.webp')) {
+      return url; // Already a direct image URL
+    }
+
+    // Case 2: Google Drive link format: drive.google.com/file/d/ID/view
+    if (url.contains('drive.google.com/file/d/')) {
+      // Extract the file ID from the URL
+      final RegExp regExp = RegExp(r'/d/([a-zA-Z0-9_-]+)');
+      final match = regExp.firstMatch(url);
+
+      if (match != null && match.groupCount >= 1) {
+        final String fileId = match.group(1)!;
+        // Return direct download URL
+        return 'https://drive.google.com/uc?export=view&id=$fileId';
+      }
+    }
+
+    // Case 3: Alternative Google Drive link format: drive.google.com/open?id=ID
+    if (url.contains('drive.google.com/open?id=')) {
+      final Uri uri = Uri.parse(url);
+      final String? fileId = uri.queryParameters['id'];
+
+      if (fileId != null) {
+        return 'https://drive.google.com/uc?export=view&id=$fileId';
+      }
+    }
+
+    // Return original URL if it doesn't match any known pattern
+    return url;
+  }
+  
 }

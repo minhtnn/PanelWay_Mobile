@@ -39,6 +39,7 @@ class _PackagePlanState extends State<PackagePlan> {
 
   @override
   Widget build(BuildContext context) {
+    final authVM = Provider.of<AuthViewModel>(context);
     // Safely access the ViewModel
     final subscriptionViewModel = Provider.of<SubcriptionViewModel>(context);
     // Use null-aware operators to prevent null pointer exceptions
@@ -102,7 +103,9 @@ class _PackagePlanState extends State<PackagePlan> {
                               amount: int.tryParse(e.price ?? '0') ?? 0,
                               description: e.name ?? "",
                               subscriptionName: e.name ?? "",
-                              quantity: 1);
+                              quantity: 1,
+                              subcriptionId: e.id ?? "",
+                              accountId: authVM.account?.id ?? "");
                           var payosQrResponse =
                               await subscriptionViewModel.getPayOsQr(request);
                           if (payosQrResponse != null) {

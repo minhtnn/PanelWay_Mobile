@@ -6,13 +6,19 @@ import 'package:panelway_mobile/app/app_palette.dart';
 import 'package:panelway_mobile/app/app_routes.dart';
 import 'package:panelway_mobile/core/widgets/back_page.dart';
 import 'package:panelway_mobile/core/widgets/custom_button.dart';
+import 'package:panelway_mobile/data/models/account.dart';
 import 'package:panelway_mobile/data/models/rental_location.dart';
+import 'package:panelway_mobile/data/models/user_subscription.dart';
+import 'package:panelway_mobile/data/payloads/responses/accountResponse.dart';
+import 'package:panelway_mobile/features/auth/view_models/auth_viewmodel.dart';
+import 'package:panelway_mobile/features/home/view_models/account_viewmodel.dart';
 import 'package:panelway_mobile/features/home/view_models/rental_location_viewmodel.dart';
 import 'package:panelway_mobile/features/home/widgets/MapCustom/build_map.dart';
 import 'package:panelway_mobile/features/home/widgets/contact_info.dart';
 import 'package:panelway_mobile/features/home/widgets/detail_description.dart';
 import 'package:panelway_mobile/features/home/widgets/detail_item.dart';
 import 'package:panelway_mobile/features/home/widgets/image_thumbnail.dart';
+import 'package:panelway_mobile/features/package_plan/view_model/subcription_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
@@ -30,6 +36,9 @@ class _ACLocationDetailState extends State<ACLocationDetail> {
   String? rentalLocationId;
   late RentalLocationViewmodel viewModel;
   RentalLocation? rentalLocation;
+  late AccountViewmodel accountViewModel;
+  AccountResponse? spaceProvider;
+  UserSubscription? userSubscription;
   bool isLoading = true;
   String? errorMessage;
 
@@ -65,9 +74,44 @@ class _ACLocationDetailState extends State<ACLocationDetail> {
 
     try {
       final data = await viewModel.getRentalLocationById(rentalLocationId!);
-
+      if (data == null) {
+        setState(() {
+          errorMessage = "Rental location not found";
+          isLoading = false;
+        });
+        return;
+      }
+      final accountOwner =
+          await Provider.of<AccountViewmodel>(context, listen: false)
+              .getAccountById(data.spaceProviderId!);
+      if (accountOwner == null) {
+        setState(() {
+          errorMessage = "Account owner not found";
+          isLoading = false;
+        });
+        return;
+      }
+      final subscriptionVM =
+          Provider.of<SubcriptionViewModel>(context, listen: false);
+      final authVM = Provider.of<AuthViewModel>(context, listen: false);
+      authVM.getAccount().then((account) async {
+        if (mounted && account != null && account.id != null) {
+          var currentSubscription = await subscriptionVM.getCurrentSubcription(
+              account.id ?? "", "Active");
+          if (currentSubscription != null) {
+            setState(() {
+              userSubscription = currentSubscription;
+            });
+          } else {
+            setState(() {
+              errorMessage = "No active subscription found";
+            });
+          }
+        }
+      });
       setState(() {
         rentalLocation = data;
+        spaceProvider = accountOwner;
         isLoading = false;
         if (data == null) {
           errorMessage = "Location not found";
@@ -81,13 +125,55 @@ class _ACLocationDetailState extends State<ACLocationDetail> {
     }
   }
 
+  // Convert various image URL formats to direct image URLs
+  String _getDirectImageUrl(String? url) {
+    if (url == null || url.isEmpty) return '';
+    
+    // Case 1: Regular direct image URLs
+    if (url.toLowerCase().endsWith('.jpg') || 
+        url.toLowerCase().endsWith('.jpeg') || 
+        url.toLowerCase().endsWith('.png') || 
+        url.toLowerCase().endsWith('.gif') ||
+        url.toLowerCase().endsWith('.webp')) {
+      return url; // Already a direct image URL
+    }
+    
+    // Case 2: Google Drive link format: drive.google.com/file/d/ID/view
+    if (url.contains('drive.google.com/file/d/')) {
+      // Extract the file ID from the URL
+      final RegExp regExp = RegExp(r'/d/([a-zA-Z0-9_-]+)');
+      final match = regExp.firstMatch(url);
+      
+      if (match != null && match.groupCount >= 1) {
+        final String fileId = match.group(1)!;
+        // Return direct download URL
+        return 'https://drive.google.com/uc?export=view&id=$fileId';
+      }
+    }
+    
+    // Case 3: Alternative Google Drive link format: drive.google.com/open?id=ID
+    if (url.contains('drive.google.com/open?id=')) {
+      final Uri uri = Uri.parse(url);
+      final String? fileId = uri.queryParameters['id'];
+      
+      if (fileId != null) {
+        return 'https://drive.google.com/uc?export=view&id=$fileId';
+      }
+    }
+    
+    // Return original URL if it doesn't match any known pattern
+    return url;
+  }
+
   Future<bool> _isImageUrlValid(String? imageUrl) async {
-    if (imageUrl == null || imageUrl.isEmpty) return false;
+    // First convert the URL to direct image URL if needed
+    final String directUrl = _getDirectImageUrl(imageUrl);
+    if (directUrl.isEmpty) return false;
 
     try {
       // Try a HEAD request to check if resource exists
       final response = await http
-          .head(Uri.parse(imageUrl))
+          .head(Uri.parse(directUrl))
           .timeout(const Duration(seconds: 5));
       return response.statusCode >= 200 && response.statusCode < 300;
     } catch (e) {
@@ -114,7 +200,8 @@ class _ACLocationDetailState extends State<ACLocationDetail> {
         child: CustomButton(
             functionName: "Book now",
             onPressed: () {
-              Navigator.pushNamed(context, AppRoutes.acBookingAppointment);
+              Navigator.pushNamed(context, AppRoutes.acBookingAppointment,
+                  arguments: rentalLocation?.id);
             },
             buttonBackgroundColor: Palette.blueButton,
             textColor: Palette.lightText),
@@ -160,8 +247,13 @@ class _ACLocationDetailState extends State<ACLocationDetail> {
                     );
                   }
 
+                  // Get direct image URL
+                  final String? directImageUrl = rentalLocation?.rentalLocationImages?[0].imageUrl != null
+                      ? _getDirectImageUrl(rentalLocation!.rentalLocationImages![0].imageUrl!)
+                      : null;
+
                   // If URL is valid, try to load the image
-                  if (snapshot.hasData && snapshot.data == true) {
+                  if (snapshot.hasData && snapshot.data == true && directImageUrl != null) {
                     return ImageFiltered(
                       imageFilter:
                           ImageFilter.blur(sigmaX: 0, sigmaY: 0), // No blur
@@ -176,7 +268,7 @@ class _ACLocationDetailState extends State<ACLocationDetail> {
                                 .darken, // You can also try other modes like multiply
                           ),
                           child: Image.network(
-                            rentalLocation!.rentalLocationImages![0].imageUrl!,
+                            directImageUrl,
                             width: double.infinity,
                             height: 350,
                             fit: BoxFit.cover,
@@ -330,15 +422,32 @@ class _ACLocationDetailState extends State<ACLocationDetail> {
                 height: 200,
                 child: Center(
                     child: BuildMap(
-                  latitude: double.tryParse((rentalLocation!.latitude??"10").toString()) ?? null,
-                  longitude: double.tryParse((rentalLocation!.longitude??"10").toString()) ?? null,
+                  latitude: double.tryParse(
+                          (rentalLocation!.latitude ?? "10").toString()) ??
+                      null,
+                  longitude: double.tryParse(
+                          (rentalLocation!.longitude ?? "10").toString()) ??
+                      null,
                 )),
                 decoration: BoxDecoration(
                     color: Colors.grey[300],
                     borderRadius: BorderRadius.circular(20)),
               ),
               const SizedBox(height: 16),
-              ContactInfo(),
+              ContactInfo(
+                account: spaceProvider ??
+                    AccountResponse(
+                        avatarUrl: "",
+                        email: "",
+                        fullName: "",
+                        gender: "",
+                        phoneNumber: ""),
+                
+                // Set showPhoneNumber based on subscription priority check
+                showPhoneNumber:
+                    userSubscription?.subscription?.priorty != null &&
+                        userSubscription!.subscription!.priorty! > 1,
+              ),
             ],
           ),
         ),

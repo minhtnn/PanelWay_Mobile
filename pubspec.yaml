@@ -28,6 +28,8 @@ dependencies:
   flutter_secure_storage: ^9.2.4
   provider: ^6.1.2
   http: ^1.3.0
+  cached_network_image: ^3.3.0
+  flutter_native_splash: ^2.3.10
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -42,6 +44,20 @@ flutter:
     - lib\assets\panelway-white-icon.png
     - lib\assets\Image-not-found.png
 flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "lib\\assets\\panelway_icon.png"
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: lib\\assets\\panelway_icon.png
+  color_dark: "#121212"
+  image_dark: lib\\assets\\panelway-black-icon.png
+  android_12:
+    image: lib\\assets\\panelway_icon.png
+    icon_background_color: "#FFFFFF"
+    image_dark: lib\\assets\\panelway-black-icon.png
+    icon_background_color_dark: "#121212"
+  fullscreen: true
   android: true
   ios: true
-  image_path: "lib\\assets\\panelway-black-icon.png"
+  web: false

@@ -1,9 +1,9 @@
 class PaginatedResponse<T> {
   final List<T> items;
-  final String totalCount;
-  final String pageIndex;
-  final String pageSize;
-  final String totalPages;
+  int totalCount;
+  int pageIndex;
+  int pageSize;
+  int totalPages;
 
   PaginatedResponse({
     required this.items,
@@ -19,10 +19,10 @@ class PaginatedResponse<T> {
   ) {
     return PaginatedResponse(
       items: (json['items'] as List).map((item) => fromJsonT(item)).toList(),
-      totalCount: json['total'].toString(),
-      pageIndex: json['page'].toString(),
-      pageSize: json['size'].toString(),
-      totalPages: json['totalPages'].toString(),
+      totalCount: json['total'],
+      pageIndex: json['page'],
+      pageSize: json['size'],
+      totalPages: json['totalPages']
     );
   }
     Map<String, dynamic> toJson(Map<String, dynamic> Function(T) toJsonT) {

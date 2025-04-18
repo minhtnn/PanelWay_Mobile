@@ -14,7 +14,7 @@ class RentalLocationRepository {
       int page, int size) async {
     try {
       var response =
-          await _apiService.get(ApiEndpoints.rentalLocationApiEndpoint);
+          await _apiService.get("${ApiEndpoints.rentalLocationApiEndpoint}?page=$page&size=$size");
 
       var rentalLocationPaging = PaginatedResponse<RentalLocation>.fromJson(
           jsonDecode(response.toString()),

@@ -8,6 +8,46 @@ class ImageThumbnail extends StatelessWidget {
   const ImageThumbnail({Key? key, required this.rentalLocationImages})
       : super(key: key);
 
+  // Convert various image URL formats to direct image URLs
+  String _getDirectImageUrl(String? url) {
+    if (url == null || url.isEmpty) return '';
+    
+    // Case 1: Regular direct image URLs
+    if (url.toLowerCase().endsWith('.jpg') || 
+        url.toLowerCase().endsWith('.jpeg') || 
+        url.toLowerCase().endsWith('.png') || 
+        url.toLowerCase().endsWith('.gif') ||
+        url.toLowerCase().endsWith('.webp')) {
+      return url; // Already a direct image URL
+    }
+    
+    // Case 2: Google Drive link format: drive.google.com/file/d/ID/view
+    if (url.contains('drive.google.com/file/d/')) {
+      // Extract the file ID from the URL
+      final RegExp regExp = RegExp(r'/d/([a-zA-Z0-9_-]+)');
+      final match = regExp.firstMatch(url);
+      
+      if (match != null && match.groupCount >= 1) {
+        final String fileId = match.group(1)!;
+        // Return direct download URL
+        return 'https://drive.google.com/uc?export=view&id=$fileId';
+      }
+    }
+    
+    // Case 3: Alternative Google Drive link format: drive.google.com/open?id=ID
+    if (url.contains('drive.google.com/open?id=')) {
+      final Uri uri = Uri.parse(url);
+      final String? fileId = uri.queryParameters['id'];
+      
+      if (fileId != null) {
+        return 'https://drive.google.com/uc?export=view&id=$fileId';
+      }
+    }
+    
+    // Return original URL if it doesn't match any known pattern
+    return url;
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -51,10 +91,13 @@ class ImageThumbnail extends StatelessWidget {
     );
   }
   
-  // New method to handle network image with fallback
+  // Modified method to handle network image with fallback and URL conversion
   Widget _buildNetworkImageWithFallback(String url, {bool withDarkOverlay = false}) {
+    // Convert URL to direct image URL if needed
+    final String directUrl = _getDirectImageUrl(url);
+    
     Widget imageWidget = Image.network(
-      url,
+      directUrl,
       fit: BoxFit.cover,
       width: double.infinity,
       height: double.infinity,
@@ -156,21 +199,24 @@ class ImageThumbnail extends StatelessWidget {
         builder: (context) => FullImageView(
           rentalLocationImages: rentalLocationImages,
           initialIndex: initialIndex,
+          getDirectImageUrl: _getDirectImageUrl, // Pass the URL conversion function
         ),
       ),
     );
   }
 }
 
-// Full image view with swipe capability
+// Modified FullImageView with URL conversion support
 class FullImageView extends StatefulWidget {
   final List<RentalLocationImage> rentalLocationImages;
   final int initialIndex;
+  final String Function(String?) getDirectImageUrl; // Function to convert URLs
 
   const FullImageView({
     Key? key,
     required this.rentalLocationImages,
     required this.initialIndex,
+    required this.getDirectImageUrl,
   }) : super(key: key);
 
   @override
@@ -212,12 +258,16 @@ class _FullImageViewState extends State<FullImageView> {
           });
         },
         itemBuilder: (context, index) {
+          // Convert URL to direct image URL
+          final String directUrl = widget.getDirectImageUrl(
+              widget.rentalLocationImages[index].imageUrl);
+              
           return InteractiveViewer(
             minScale: 0.5,
             maxScale: 3.0,
             child: Center(
               child: Image.network(
-                widget.rentalLocationImages[index].imageUrl ?? '',
+                directUrl,
                 fit: BoxFit.contain,
                 errorBuilder: (context, error, stackTrace) {
                   return Column(
